@@ -29,7 +29,9 @@ function Shell({ children }) {
 export default function PlayOnline() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [me, setMe] = useState(null);
+  const [uid, setUid] = useState(() => localStorage.getItem("bp_uid") || "");
+  const [nickname, setNickname] = useState(() => localStorage.getItem("bp_nick") || "");
+  const [nickInput, setNickInput] = useState("");
   const [game, setGame] = useState(null);
   const [players, setPlayers] = useState({});
   const [loading, setLoading] = useState(true);
@@ -41,20 +43,26 @@ export default function PlayOnline() {
   const [myLines, setMyLines] = useState(0);
   const [myPlayerId, setMyPlayerId] = useState(null);
 
-  useEffect(() => {
-    base44
-      .auth.me()
-      .then(setMe)
-      .catch(() => {
-        setError("Você precisa estar logado para jogar online.");
-        setLoading(false);
-      });
-  }, []);
+  const ready = Boolean(uid && nickname);
+
+  const submitNick = () => {
+    const n = nickInput.trim();
+    if (!n) return;
+    const id =
+      (crypto.randomUUID && crypto.randomUUID()) || Math.random().toString(36).slice(2);
+    localStorage.setItem("bp_uid", id);
+    localStorage.setItem("bp_nick", n);
+    setUid(id);
+    setNickname(n);
+  };
 
   useEffect(() => {
-    if (!me) return;
+    if (!ready) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
     const code = searchParams.get("sala");
-    const displayName = me.full_name || me.email;
     (async () => {
       try {
         let g;
@@ -66,7 +74,7 @@ export default function PlayOnline() {
             return;
           }
           g = found[0];
-          const existing = await base44.entities.Player.filter({ game_id: g.id, user_id: me.id });
+          const existing = await base44.entities.Player.filter({ game_id: g.id, user_id: uid });
           let p;
           if (existing.length) {
             p = existing[0];
@@ -80,8 +88,8 @@ export default function PlayOnline() {
             p = await base44.entities.Player.create({
               game_id: g.id,
               room_code: code,
-              user_id: me.id,
-              display_name: displayName,
+              user_id: uid,
+              display_name: nickname,
               card: generateCard(),
               marks: initialMarks(),
               lines_completed: 0,
@@ -103,7 +111,7 @@ export default function PlayOnline() {
           g = await base44.entities.Game.create({
             room_code: newCode,
             status: "waiting",
-            host_id: me.id,
+            host_id: uid,
             called_arguments: [],
             first_line_player_id: "",
             first_line_player_name: "",
@@ -113,8 +121,8 @@ export default function PlayOnline() {
           const p = await base44.entities.Player.create({
             game_id: g.id,
             room_code: newCode,
-            user_id: me.id,
-            display_name: displayName,
+            user_id: uid,
+            display_name: nickname,
             card: generateCard(),
             marks: initialMarks(),
             lines_completed: 0,
@@ -134,7 +142,7 @@ export default function PlayOnline() {
       }
       setLoading(false);
     })();
-  }, [me]);
+  }, [ready]);
 
   useEffect(() => {
     if (!game) return;
@@ -158,6 +166,41 @@ export default function PlayOnline() {
     return unsub;
   }, [game?.id]);
 
+  if (!ready)
+    return (
+      <Shell>
+        <div className="max-w-sm w-full text-center">
+          <div className="w-14 h-14 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-4">
+            <Users className="w-7 h-7" />
+          </div>
+          <h2 className="text-xl font-black text-slate-900 mb-1">Entrar na partida</h2>
+          <p className="text-sm text-slate-500 mb-4">Digite só um apelido — sem cadastro, sem login.</p>
+          <input
+            value={nickInput}
+            onChange={(e) => setNickInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && submitNick()}
+            placeholder="Seu apelido"
+            maxLength={20}
+            autoFocus
+            className="w-full text-center font-bold text-lg px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-rose-400 outline-none mb-3"
+          />
+          <button
+            onClick={submitNick}
+            disabled={!nickInput.trim()}
+            className="w-full py-3 rounded-full bg-rose-500 text-white font-bold disabled:opacity-40 hover:bg-rose-600 transition-colors"
+          >
+            Jogar
+          </button>
+          <button
+            onClick={() => navigate("/")}
+            className="mt-4 text-sm text-slate-500 hover:text-slate-800 font-semibold"
+          >
+            Voltar
+          </button>
+        </div>
+      </Shell>
+    );
+
   if (loading)
     return (
       <Shell>
@@ -180,8 +223,7 @@ export default function PlayOnline() {
     );
   if (!game) return null;
 
-  const isHost = game.host_id === me.id;
-  const displayName = me.full_name || me.email;
+  const isHost = game.host_id === uid;
   const called = game.called_arguments || [];
   const currentArg = called[called.length - 1] || null;
   const playerList = Object.values(players).map((p) =>
@@ -216,8 +258,8 @@ export default function PlayOnline() {
     if (newLines > oldLines && !game.first_line_player_id) {
       gain += FIRST_LINE_BONUS;
       base44.entities.Game.update(game.id, {
-        first_line_player_id: me.id,
-        first_line_player_name: displayName
+        first_line_player_id: uid,
+        first_line_player_name: nickname
       });
       toast.success(`Primeira quina! +${FIRST_LINE_BONUS} bônus`);
     }
@@ -232,8 +274,8 @@ export default function PlayOnline() {
     });
     if (isFullCard(newMarks)) {
       await base44.entities.Game.update(game.id, {
-        winner_id: me.id,
-        winner_name: displayName,
+        winner_id: uid,
+        winner_name: nickname,
         status: "finished"
       });
     }
@@ -350,8 +392,8 @@ export default function PlayOnline() {
             )}
           </div>
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-3">
-            <h3 className="text-xs font-bold text-slate-500 mb-2 px-1">RANKING</h3>
-            <RankingList players={playerList} currentUserId={me.id} />
+            <h3 className="text-xs font-bold text-slate-500 mb-2 px-1">RANKING · TOP 5</h3>
+            <RankingList players={playerList} currentUserId={uid} />
           </div>
         </aside>
       </main>
@@ -376,7 +418,7 @@ export default function PlayOnline() {
                 </p>
               </div>
               <div className="max-h-64 overflow-y-auto mb-4">
-                <RankingList players={playerList} currentUserId={me.id} />
+                <RankingList players={playerList} currentUserId={uid} />
               </div>
               <button
                 onClick={() => navigate("/")}
