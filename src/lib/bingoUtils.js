@@ -48,3 +48,12 @@ export function getWinningLine(marks) {
   if (!marks || marks.length !== 25) return null;
   return LINES.find((line) => line.every((i) => marks[i])) || null;
 }
+
+export function countCompletedLines(marks) {
+  if (!marks || marks.length !== 25) return 0;
+  return LINES.filter((line) => line.every((i) => marks[i])).length;
+}
+
+export function isFullCard(marks) {
+  return !!marks && marks.length === 25 && marks.every(Boolean);
+}

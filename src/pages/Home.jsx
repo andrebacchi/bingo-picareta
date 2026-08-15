@@ -46,7 +46,7 @@ export default function Home() {
             </div>
             <div className="flex-1">
               <h3 className="font-bold">Criar Sala Online</h3>
-              <p className="text-sm text-white/60">Convide um amigo para competir ao vivo.</p>
+              <p className="text-sm text-white/60">Convide amigos ou a sala de aula (até 50).</p>
             </div>
             <ArrowRight className="w-5 h-5 text-white/40 group-hover:translate-x-1 transition-all" />
           </button>

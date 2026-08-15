@@ -1,0 +1,45 @@
+{
+  "name": "Player",
+  "type": "object",
+  "properties": {
+    "game_id": {
+      "type": "string"
+    },
+    "room_code": {
+      "type": "string"
+    },
+    "user_id": {
+      "type": "string"
+    },
+    "display_name": {
+      "type": "string"
+    },
+    "card": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "marks": {
+      "type": "array",
+      "items": {
+        "type": "boolean"
+      },
+      "default": []
+    },
+    "lines_completed": {
+      "type": "number",
+      "default": 0
+    },
+    "score": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "game_id",
+    "user_id",
+    "display_name"
+  ]
+}

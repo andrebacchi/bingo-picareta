@@ -17,9 +17,6 @@
     "host_id": {
       "type": "string"
     },
-    "guest_id": {
-      "type": "string"
-    },
     "called_arguments": {
       "type": "array",
       "items": {
@@ -27,41 +24,20 @@
       },
       "default": []
     },
-    "host_card": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "default": []
-    },
-    "host_marks": {
-      "type": "array",
-      "items": {
-        "type": "boolean"
-      },
-      "default": []
-    },
-    "guest_card": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "default": []
-    },
-    "guest_marks": {
-      "type": "array",
-      "items": {
-        "type": "boolean"
-      },
-      "default": []
-    },
-    "winner": {
+    "first_line_player_id": {
       "type": "string",
-      "enum": [
-        "host",
-        "guest",
-        ""
-      ],
+      "default": ""
+    },
+    "first_line_player_name": {
+      "type": "string",
+      "default": ""
+    },
+    "winner_id": {
+      "type": "string",
+      "default": ""
+    },
+    "winner_name": {
+      "type": "string",
       "default": ""
     }
   },
