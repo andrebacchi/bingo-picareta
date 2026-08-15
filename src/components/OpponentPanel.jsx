@@ -1,9 +1,19 @@
-export default function OpponentPanel({ name, emoji, marks, isMachine, machineThinking }) {
+import SpeechBubble from "@/components/SpeechBubble";
+import { Image } from "@/components/ui/image";
+
+export default function OpponentPanel({ name, emoji, image, marks, isMachine, machineThinking, bubble }) {
   const count = marks?.filter(Boolean).length || 0;
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="relative flex flex-col items-center gap-2">
+      <SpeechBubble text={bubble} />
+      <div className="w-14 h-14 rounded-full overflow-hidden bg-slate-100 flex items-center justify-center ring-2 ring-white shadow">
+        {image ? (
+          <Image src={image} alt={name} fittingType="fill" className="w-full h-full" />
+        ) : (
+          <span className="text-2xl">{emoji}</span>
+        )}
+      </div>
       <div className="flex items-center gap-2">
-        {emoji && <span className="text-base">{emoji}</span>}
         <span className="text-sm font-bold text-slate-700">{name}</span>
         {machineThinking && <span className="text-xs text-rose-500 animate-pulse">marcando…</span>}
       </div>

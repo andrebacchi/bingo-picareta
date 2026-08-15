@@ -1,14 +1,27 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { generateCard, initialMarks, checkBingo, shuffle } from "@/lib/bingoUtils";
+import { generateCard, initialMarks, checkBingo, shuffle, FREE_SPACE } from "@/lib/bingoUtils";
 import { PSEUDO_ARGUMENTS } from "@/data/arguments";
 import { OPPONENTS } from "@/data/opponents";
+import { TAUNTS, COMPLAINTS } from "@/data/phrases";
 import BingoCard from "@/components/BingoCard";
 import CalledPanel from "@/components/CalledPanel";
 import OpponentPanel from "@/components/OpponentPanel";
+import { Image } from "@/components/ui/image";
 import { Home as HomeIcon, RotateCcw, Trophy } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+
+function Avatar({ opponent, size = "text-3xl", box = "w-16 h-16" }) {
+  if (opponent.image) {
+    return (
+      <div className={`${box} rounded-full overflow-hidden mx-auto ring-2 ring-white shadow`}>
+        <Image src={opponent.image} alt={opponent.name} fittingType="fill" className="w-full h-full" />
+      </div>
+    );
+  }
+  return <span className={size}>{opponent.emoji}</span>;
+}
 
 export default function PlayMachine() {
   const navigate = useNavigate();
@@ -22,6 +35,12 @@ export default function PlayMachine() {
   const [gameOver, setGameOver] = useState(false);
   const [winner, setWinner] = useState(null);
   const [thinking, setThinking] = useState(false);
+  const [bubble, setBubble] = useState(null);
+  const bubbleTimer = useRef(null);
+
+  useEffect(() => () => {
+    if (bubbleTimer.current) clearTimeout(bubbleTimer.current);
+  }, []);
 
   const calledSet = new Set(called);
 
@@ -35,7 +54,7 @@ export default function PlayMachine() {
 
   const start = (selected) => {
     setOpponents(
-      selected.map((o) => ({ name: o.name, emoji: o.emoji, card: generateCard(), marks: initialMarks() }))
+      selected.map((o) => ({ name: o.name, emoji: o.emoji, image: o.image, card: generateCard(), marks: initialMarks() }))
     );
     setMyCard(generateCard());
     setMyMarks(initialMarks());
@@ -44,6 +63,7 @@ export default function PlayMachine() {
     setGameOver(false);
     setWinner(null);
     setThinking(false);
+    setBubble(null);
     setPhase("playing");
   };
 
@@ -57,26 +77,45 @@ export default function PlayMachine() {
     setThinking(true);
     setTimeout(() => {
       let newWinner = null;
-      setOpponents((prev) =>
-        prev.map((o) => {
-          const updated = [...o.marks];
-          o.card.forEach((a, i) => {
-            if (a === next) updated[i] = true;
-          });
-          if (!newWinner && checkBingo(updated)) newWinner = o.name;
-          return { ...o, marks: updated };
-        })
-      );
+      const newOpps = opponents.map((o) => {
+        const updated = [...o.marks];
+        o.card.forEach((a, i) => {
+          if (a === next) updated[i] = true;
+        });
+        if (!newWinner && checkBingo(updated)) newWinner = o.name;
+        return { ...o, marks: updated };
+      });
+      setOpponents(newOpps);
       if (newWinner) {
         setWinner(newWinner);
         setGameOver(true);
+      } else if (Math.random() < 0.5) {
+        const myCount = myMarks.filter(Boolean).length;
+        let bestDiff = 0;
+        let bestName = null;
+        let ahead = false;
+        newOpps.forEach((o) => {
+          const diff = o.marks.filter(Boolean).length - myCount;
+          if (Math.abs(diff) > Math.abs(bestDiff)) {
+            bestDiff = diff;
+            bestName = o.name;
+            ahead = diff > 0;
+          }
+        });
+        if (bestName && Math.abs(bestDiff) >= 1) {
+          const pool = ahead ? TAUNTS : COMPLAINTS;
+          const text = pool[Math.floor(Math.random() * pool.length)];
+          setBubble({ name: bestName, text });
+          if (bubbleTimer.current) clearTimeout(bubbleTimer.current);
+          bubbleTimer.current = setTimeout(() => setBubble(null), 3500);
+        }
       }
       setThinking(false);
     }, 1400);
   };
 
   const toggle = (i) => {
-    if (gameOver || myCard[i] === "GRÁTIS") return;
+    if (gameOver || myCard[i] === FREE_SPACE) return;
     if (!calledSet.has(myCard[i])) return;
     setMyMarks((prev) => {
       const updated = [...prev];
@@ -90,6 +129,8 @@ export default function PlayMachine() {
   };
 
   const reset = () => {
+    if (bubbleTimer.current) clearTimeout(bubbleTimer.current);
+    setBubble(null);
     setPhase("setup");
     setSelectedOpps([OPPONENTS[0]]);
     setCalled([]);
@@ -124,12 +165,10 @@ export default function PlayMachine() {
                   onClick={() => toggleSelect(o)}
                   className={cn(
                     "flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all",
-                    selected
-                      ? "border-rose-500 bg-rose-50 shadow-sm"
-                      : "border-slate-200 bg-white hover:border-slate-300"
+                    selected ? "border-rose-500 bg-rose-50 shadow-sm" : "border-slate-200 bg-white hover:border-slate-300"
                   )}
                 >
-                  <span className="text-3xl">{o.emoji}</span>
+                  <Avatar opponent={o} />
                   <span className="text-sm font-bold text-slate-700 text-center">{o.name}</span>
                 </button>
               );
@@ -188,9 +227,11 @@ export default function PlayMachine() {
                 <OpponentPanel
                   name={o.name}
                   emoji={o.emoji}
+                  image={o.image}
                   marks={o.marks}
                   isMachine
                   machineThinking={thinking}
+                  bubble={bubble?.name === o.name ? bubble.text : null}
                 />
               </div>
             ))}

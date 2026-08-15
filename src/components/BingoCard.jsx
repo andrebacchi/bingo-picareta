@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { getWinningLine } from "@/lib/bingoUtils";
+import { getWinningLine, FREE_SPACE } from "@/lib/bingoUtils";
 
 export default function BingoCard({ card, marks, onToggle, disabled }) {
   const winLine = marks ? getWinningLine(marks) : null;
@@ -7,7 +7,7 @@ export default function BingoCard({ card, marks, onToggle, disabled }) {
     <div className="grid grid-cols-5 gap-1 sm:gap-1.5">
       {card.map((arg, i) => {
         const marked = marks?.[i];
-        const isFree = arg === "GRÁTIS";
+        const isFree = arg === FREE_SPACE;
         const isWin = winLine?.includes(i);
         const clickable = !disabled && !isFree && !!onToggle;
         return (

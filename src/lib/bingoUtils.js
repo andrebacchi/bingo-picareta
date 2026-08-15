@@ -1,5 +1,7 @@
 import { PSEUDO_ARGUMENTS } from "@/data/arguments";
 
+export const FREE_SPACE = "PICARETA";
+
 export function shuffle(array) {
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
@@ -12,7 +14,7 @@ export function shuffle(array) {
 export function generateCard() {
   const picked = shuffle(PSEUDO_ARGUMENTS).slice(0, 24);
   const card = [...picked];
-  card.splice(12, 0, "GRÁTIS");
+  card.splice(12, 0, FREE_SPACE);
   return card;
 }
 

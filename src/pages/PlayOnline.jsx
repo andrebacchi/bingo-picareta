@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { generateCard, initialMarks, checkBingo, shuffle } from "@/lib/bingoUtils";
+import { generateCard, initialMarks, checkBingo, shuffle, FREE_SPACE } from "@/lib/bingoUtils";
 import { PSEUDO_ARGUMENTS } from "@/data/arguments";
 import BingoCard from "@/components/BingoCard";
 import CalledPanel from "@/components/CalledPanel";
@@ -143,7 +143,7 @@ export default function PlayOnline() {
 
   const toggle = async (i) => {
     if (game.status !== "playing" || gameOver) return;
-    if (myCard[i] === "GRÁTIS") return;
+    if (myCard[i] === FREE_SPACE) return;
     if (!called.includes(myCard[i])) return;
     const updated = [...myMarks];
     updated[i] = !updated[i];
