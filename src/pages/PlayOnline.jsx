@@ -10,7 +10,7 @@ import {
   FREE_SPACE
 } from "@/lib/bingoUtils";
 import { PSEUDO_ARGUMENTS } from "@/data/arguments";
-import { POINTS_PER_LINE, FIRST_LINE_BONUS, FULL_CARD_BONUS, MAX_PLAYERS } from "@/data/scoring";
+import { POINTS_PER_MARK, LINE_BONUS, FIRST_LINE_BONUS, FULL_CARD_BONUS, MAX_PLAYERS } from "@/data/scoring";
 import BingoCard from "@/components/BingoCard";
 import CalledPanel from "@/components/CalledPanel";
 import RankingList from "@/components/RankingList";
@@ -254,7 +254,8 @@ export default function PlayOnline() {
     newMarks[i] = true;
     const oldLines = myLines;
     const newLines = countCompletedLines(newMarks);
-    let gain = (newLines - oldLines) * POINTS_PER_LINE;
+    let gain = POINTS_PER_MARK;
+    if (newLines > oldLines) gain += (newLines - oldLines) * LINE_BONUS;
     if (newLines > oldLines && !game.first_line_player_id) {
       gain += FIRST_LINE_BONUS;
       base44.entities.Game.update(game.id, {
