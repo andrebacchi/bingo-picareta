@@ -1,9 +1,9 @@
 import { cn } from "@/lib/utils";
 
 export default function RankingList({ players, currentUserId }) {
-  const sorted = [...players].sort(
-    (a, b) => b.score - a.score || b.lines_completed - a.lines_completed
-  );
+  const sorted = [...players]
+    .sort((a, b) => b.score - a.score || b.lines_completed - a.lines_completed)
+    .slice(0, 5);
   return (
     <div className="flex flex-col gap-1.5">
       {sorted.map((p, idx) => {
