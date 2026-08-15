@@ -8,6 +8,7 @@ import { TAUNTS, COMPLAINTS } from "@/data/phrases";
 import BingoCard from "@/components/BingoCard";
 import CalledPanel from "@/components/CalledPanel";
 import OpponentPanel from "@/components/OpponentPanel";
+import TauntOverlay from "@/components/TauntOverlay";
 import { Image } from "@/components/ui/image";
 import { Home as HomeIcon, RotateCcw, Trophy } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -186,6 +187,7 @@ export default function PlayMachine() {
     );
   }
 
+  const bubbleOpponent = bubble ? opponents.find((o) => o.name === bubble.name) : null;
   const winnerEmoji = opponents.find((o) => o.name === winner)?.emoji;
 
   return (
@@ -238,6 +240,8 @@ export default function PlayMachine() {
           </div>
         </aside>
       </main>
+
+      <TauntOverlay opponent={bubbleOpponent} text={bubble?.text} />
 
       <AnimatePresence>
         {gameOver && (
