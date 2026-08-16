@@ -31,8 +31,8 @@ export default function Home() {
               <Bot className="w-6 h-6" />
             </div>
             <div className="flex-1">
-              <h3 className="font-bold text-slate-900">Jogar contra a Máquina</h3>
-              <p className="text-sm text-slate-500">Partida rápida, sem login.</p>
+              <h3 className="font-bold text-slate-900">Jogar Sozinho</h3>
+              <p className="text-sm text-slate-500">Partida rápida</p>
             </div>
             <ArrowRight className="w-5 h-5 text-slate-300 group-hover:translate-x-1 group-hover:text-rose-500 transition-all" />
           </button>
@@ -46,7 +46,7 @@ export default function Home() {
             </div>
             <div className="flex-1">
               <h3 className="font-bold">Criar Sala Online</h3>
-              <p className="text-sm text-white/60">Convide amigos ou a sala de aula (até 50).</p>
+              <p className="text-sm text-white/60">Jogue online com até 50 pessoas.</p>
             </div>
             <ArrowRight className="w-5 h-5 text-white/40 group-hover:translate-x-1 transition-all" />
           </button>
