@@ -75,6 +75,9 @@ export default function Home() {
         <p className="text-center text-xs text-slate-400 mt-8 px-4">
           Como jogar: Este é um bingo que, ao invés de sortear números, sorteia argumentos comuns de profissionais picaretas. Marque na sua cartela os argumentos sorteados e grite BINGO quando completar linhas, colunas, diagonais ou a cartela cheia!
         </p>
+        <p className="text-center text-xs text-slate-400 mt-4">
+          Criado por André Demambre Bacchi
+        </p>
       </main>
     </div>
   );
