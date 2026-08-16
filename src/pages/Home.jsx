@@ -11,9 +11,11 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-b from-amber-50 via-rose-50 to-white flex flex-col">
       <main className="flex-1 max-w-2xl mx-auto px-5 py-12 sm:py-16 w-full">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
-          <h1 className="font-display text-4xl sm:text-5xl font-black text-slate-900 leading-tight">
-            Bingo do Picareta
-          </h1>
+          <img
+            src="https://media.base44.com/images/public/6a80868dfa031074de38ceef/8ab29996f_BingoPicareta.png"
+            alt="Bingo do Picareta"
+            className="w-full max-w-md mx-auto rounded-2xl"
+          />
           <p className="mt-3 text-slate-500 text-sm sm:text-base max-w-md mx-auto">
             Aprenda sobre falácias lógicas e vieses cognitivos de maneira rápida, divertida e sem evidências científicas.
           </p>
