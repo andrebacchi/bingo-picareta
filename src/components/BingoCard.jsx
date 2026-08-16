@@ -27,7 +27,9 @@ export default function BingoCard({ card, marks, onToggle, disabled }) {
               clickable && "hover:scale-[1.04] hover:border-rose-400 cursor-pointer active:scale-95"
             )}
           >
-            <span className="relative z-10 px-0.5">{arg}</span>
+            <span className="relative z-10 px-0.5">
+              {isFree ? <span className="text-3xl sm:text-5xl leading-none">⛏️</span> : arg}
+            </span>
             {marked && !isFree && (
               <span className="absolute inset-0 flex items-center justify-center">
                 <span className="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/20 border-2 border-white/80 flex items-center justify-center text-base sm:text-lg font-black">
