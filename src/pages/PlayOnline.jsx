@@ -180,7 +180,7 @@ export default function PlayOnline() {
             <Users className="w-7 h-7" />
           </div>
           <h2 className="text-xl font-black text-slate-900 mb-1">Entrar na partida</h2>
-          <p className="text-sm text-slate-500 mb-4">Digite seu nome — sem cadastro, sem login.</p>
+          <p className="text-sm text-slate-500 mb-4">Digite seu nome</p>
           <div className="flex items-center gap-2 rounded-xl border-2 border-slate-200 focus-within:border-rose-400 px-4 py-3 bg-white mb-3">
             <span className="font-bold text-rose-500">Dr.</span>
             <input
