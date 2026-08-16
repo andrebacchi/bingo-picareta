@@ -30,9 +30,16 @@ function Shell({ children }) {
 export default function PlayOnline() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [uid, setUid] = useState(() => localStorage.getItem("bp_uid") || "");
-  const [nickname, setNickname] = useState(() => localStorage.getItem("bp_nick") || "");
-  const [nickInput, setNickInput] = useState("");
+  const [uid] = useState(() => {
+    let id = localStorage.getItem("bp_uid");
+    if (!id) {
+      id = (crypto.randomUUID && crypto.randomUUID()) || Math.random().toString(36).slice(2);
+      localStorage.setItem("bp_uid", id);
+    }
+    return id;
+  });
+  const [nickname, setNickname] = useState("");
+  const [nickInput, setNickInput] = useState(() => localStorage.getItem("bp_nick") || "");
   const [game, setGame] = useState(null);
   const [players, setPlayers] = useState({});
   const [loading, setLoading] = useState(true);
@@ -45,16 +52,12 @@ export default function PlayOnline() {
   const [myPlayerId, setMyPlayerId] = useState(null);
   const [winMode, setWinMode] = useState("full");
 
-  const ready = Boolean(uid && nickname);
+  const ready = Boolean(nickname);
 
   const submitNick = () => {
     const n = nickInput.trim();
     if (!n) return;
-    const id =
-      (crypto.randomUUID && crypto.randomUUID()) || Math.random().toString(36).slice(2);
-    localStorage.setItem("bp_uid", id);
     localStorage.setItem("bp_nick", n);
-    setUid(id);
     setNickname(n);
   };
 
@@ -125,7 +128,7 @@ export default function PlayOnline() {
             game_id: g.id,
             room_code: newCode,
             user_id: uid,
-            display_name: nickname,
+            display_name: `Dr. ${nickname}`,
             card: generateCard(),
             marks: initialMarks(),
             lines_completed: 0,
@@ -177,16 +180,19 @@ export default function PlayOnline() {
             <Users className="w-7 h-7" />
           </div>
           <h2 className="text-xl font-black text-slate-900 mb-1">Entrar na partida</h2>
-          <p className="text-sm text-slate-500 mb-4">Digite só um apelido — sem cadastro, sem login.</p>
-          <input
-            value={nickInput}
-            onChange={(e) => setNickInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && submitNick()}
-            placeholder="Seu apelido"
-            maxLength={20}
-            autoFocus
-            className="w-full text-center font-bold text-lg px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-rose-400 outline-none mb-3"
-          />
+          <p className="text-sm text-slate-500 mb-4">Digite seu nome — sem cadastro, sem login.</p>
+          <div className="flex items-center gap-2 rounded-xl border-2 border-slate-200 focus-within:border-rose-400 px-4 py-3 bg-white mb-3">
+            <span className="font-bold text-rose-500">Dr.</span>
+            <input
+              value={nickInput}
+              onChange={(e) => setNickInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && submitNick()}
+              placeholder="seu nome"
+              maxLength={20}
+              autoFocus
+              className="flex-1 bg-transparent outline-none font-bold text-slate-800 text-center text-lg"
+            />
+          </div>
           <button
             onClick={submitNick}
             disabled={!nickInput.trim()}
