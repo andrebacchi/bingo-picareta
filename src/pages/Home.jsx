@@ -73,7 +73,7 @@ export default function Home() {
         </div>
 
         <p className="text-center text-xs text-slate-400 mt-8 px-4">
-          Como jogar: cada sorteio revela um argumento. Marque na sua cartela se você o tiver. Complete uma linha, coluna ou diagonal e grite BINGO!
+          Como jogar: Este é um bingo que, ao invés de sortear números, sorteia argumentos comuns de profissionais picaretas. Marque na sua cartela os argumentos sorteados e grite BINGO quando completar linhas, colunas, diagonais ou a cartela cheia!
         </p>
       </main>
     </div>
