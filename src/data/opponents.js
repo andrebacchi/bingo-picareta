@@ -1,8 +1,8 @@
 export const OPPONENTS = [
-  { name: "Dr. Charlatão", emoji: "🧙", image: null },
-  { name: "Curandeira Clara", emoji: "🔮", image: null },
-  { name: "Mestre Quantum", emoji: "⚛️", image: null },
-  { name: "Tia do Chá", emoji: "🍵", image: null },
-  { name: "Guru da Vibração", emoji: "🧘", image: null },
-  { name: "Vidente Valdir", emoji: "🔮", image: null }
+  { name: "Dr. Charles Latão", emoji: "🧙", image: null },
+  { name: "Dra. Pikah Aretha", emoji: "🔮", image: null },
+  { name: "Dr. Pílan Traj", emoji: "⚛️", image: null },
+  { name: "Dra. Faulkah Truah", emoji: "🍵", image: null },
+  { name: "Dr. Cair Dinheiro", emoji: "🧘", image: null },
+  { name: "Dra. Seinô Sao", emoji: "🔮", image: null }
 ];
