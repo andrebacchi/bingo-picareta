@@ -11,14 +11,11 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-b from-amber-50 via-rose-50 to-white flex flex-col">
       <main className="flex-1 max-w-2xl mx-auto px-5 py-12 sm:py-16 w-full">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-100 text-rose-700 text-xs font-semibold mb-4">
-            🎲 Edição cética
-          </div>
           <h1 className="font-display text-4xl sm:text-5xl font-black text-slate-900 leading-tight">
             Bingo do Picareta
           </h1>
           <p className="mt-3 text-slate-500 text-sm sm:text-base max-w-md mx-auto">
-            Complete uma linha com os argumentos pseudocientíficos mais clássicos. Rápido, divertido e sem evidância científica.
+            Aprenda sobre falácias lógicas e vieses cognitivos de maneira rápida, divertida e sem evidências científicas.
           </p>
         </motion.div>
 
