@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { generateCard, initialMarks, checkBingo, shuffle, FREE_SPACE } from "@/lib/bingoUtils";
 import { PSEUDO_ARGUMENTS } from "@/data/arguments";
 import { OPPONENTS } from "@/data/opponents";
-import { TAUNTS, COMPLAINTS } from "@/data/phrases";
+import { TAUNTS, COMPLAINTS, VICTORY_TAUNTS } from "@/data/phrases";
 import BingoCard from "@/components/BingoCard";
 import CalledPanel from "@/components/CalledPanel";
 import OpponentPanel from "@/components/OpponentPanel";
@@ -38,6 +38,9 @@ export default function PlayMachine() {
   const [thinking, setThinking] = useState(false);
   const [bubble, setBubble] = useState(null);
   const bubbleTimer = useRef(null);
+  const [playerName, setPlayerName] = useState("");
+  const [playerNameInput, setPlayerNameInput] = useState(() => localStorage.getItem("bp_machine_nick") || "");
+  const [victoryPhrase, setVictoryPhrase] = useState("");
 
   useEffect(() => () => {
     if (bubbleTimer.current) clearTimeout(bubbleTimer.current);
@@ -54,6 +57,9 @@ export default function PlayMachine() {
   };
 
   const start = (selected) => {
+    const name = playerNameInput.trim();
+    setPlayerName(name);
+    localStorage.setItem("bp_machine_nick", name);
     setOpponents(
       selected.map((o) => ({ name: o.name, emoji: o.emoji, image: o.image, card: generateCard(), marks: initialMarks() }))
     );
@@ -89,6 +95,7 @@ export default function PlayMachine() {
       setOpponents(newOpps);
       if (newWinner) {
         setWinner(newWinner);
+        setVictoryPhrase(VICTORY_TAUNTS[Math.floor(Math.random() * VICTORY_TAUNTS.length)]);
         setGameOver(true);
       } else if (Math.random() < 0.5) {
         const myCount = myMarks.filter(Boolean).length;
@@ -157,6 +164,20 @@ export default function PlayMachine() {
         <main className="max-w-xl mx-auto px-5 py-8">
           <h2 className="text-xl font-black text-slate-900 text-center mb-1">Escolha seus adversários</h2>
           <p className="text-sm text-slate-500 text-center mb-6">Selecione de 1 a 3 picaretas para enfrentar.</p>
+          <div className="mb-6">
+            <label className="block text-sm font-bold text-slate-700 mb-2">Seu nome</label>
+            <div className="flex items-center gap-2 rounded-xl border-2 border-slate-200 focus-within:border-rose-400 px-4 py-3 bg-white">
+              <span className="font-bold text-rose-500">Dr.</span>
+              <input
+                value={playerNameInput}
+                onChange={(e) => setPlayerNameInput(e.target.value)}
+                placeholder="seu nome"
+                maxLength={20}
+                className="flex-1 bg-transparent outline-none font-bold text-slate-800"
+                autoFocus
+              />
+            </div>
+          </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {OPPONENTS.map((o) => {
               const selected = selectedOpps.some((s) => s.name === o.name);
@@ -177,7 +198,7 @@ export default function PlayMachine() {
           </div>
           <button
             onClick={() => start(selectedOpps)}
-            disabled={selectedOpps.length < 1}
+            disabled={selectedOpps.length < 1 || !playerNameInput.trim()}
             className="mt-6 w-full py-3 rounded-full bg-slate-900 text-white font-bold disabled:opacity-40 hover:bg-slate-800 transition-colors"
           >
             Começar ({selectedOpps.length})
@@ -188,7 +209,7 @@ export default function PlayMachine() {
   }
 
   const bubbleOpponent = bubble ? opponents.find((o) => o.name === bubble.name) : null;
-  const winnerEmoji = opponents.find((o) => o.name === winner)?.emoji;
+  const winnerOpponent = opponents.find((o) => o.name === winner);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 via-rose-50 to-white">
@@ -210,7 +231,7 @@ export default function PlayMachine() {
 
       <main className="max-w-5xl mx-auto px-4 pb-10 grid lg:grid-cols-[1fr_320px] gap-6">
         <section>
-          <h2 className="text-sm font-bold text-slate-500 mb-2">Sua cartela</h2>
+          <h2 className="text-sm font-bold text-slate-500 mb-2">Sua cartela · <span className="text-slate-900 font-black">Dr. {playerName}</span></h2>
           <BingoCard card={myCard} marks={myMarks} onToggle={toggle} disabled={gameOver} />
         </section>
         <aside className="flex flex-col gap-4">
@@ -254,17 +275,35 @@ export default function PlayMachine() {
             <motion.div
               initial={{ scale: 0.8, y: 20 }}
               animate={{ scale: 1, y: 0 }}
-              className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl"
+              className="bg-white rounded-3xl p-7 max-w-sm w-full text-center shadow-2xl"
             >
-              <div className="text-5xl mb-2">{winner === "you" ? "🎉" : winnerEmoji}</div>
-              <h2 className="text-2xl font-black mb-1">
-                {winner === "you" ? "BINGO! 🎉" : `${winner} gritou BINGO 😈`}
-              </h2>
-              <p className="text-slate-500 text-sm mb-5">
-                {winner === "you"
-                  ? "Você completou uma linha antes dos picaretas!"
-                  : "Um adversário completou primeiro. Tente de novo!"}
-              </p>
+              {winner === "you" ? (
+                <>
+                  <div className="text-5xl mb-2">🎉</div>
+                  <h2 className="text-2xl font-black mb-1">BINGO! 🎉</h2>
+                  <p className="text-slate-500 text-sm mb-5">
+                    Dr. {playerName} completou uma linha antes dos picaretas!
+                  </p>
+                </>
+              ) : (
+                <>
+                  <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-3 ring-4 ring-rose-300 shadow-lg">
+                    {winnerOpponent?.image ? (
+                      <Image src={winnerOpponent.image} alt={winner} fittingType="fill" className="w-full h-full" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-5xl bg-rose-100">
+                        {winnerOpponent?.emoji}
+                      </div>
+                    )}
+                  </div>
+                  <div className="relative bg-rose-50 border-2 border-rose-200 rounded-2xl px-4 py-3 mb-4 max-w-xs mx-auto">
+                    <p className="font-bold text-slate-800 text-sm">"{victoryPhrase}"</p>
+                    <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-rose-50 border-r-2 border-b-2 border-rose-200 rotate-45"></div>
+                  </div>
+                  <h2 className="text-xl font-black mb-1">{winner} gritou BINGO 😈</h2>
+                  <p className="text-slate-500 text-sm mb-5">Tente de novo!</p>
+                </>
+              )}
               <div className="flex gap-2 justify-center">
                 <button
                   onClick={reset}

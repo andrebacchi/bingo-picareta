@@ -89,7 +89,7 @@ export default function PlayOnline() {
               game_id: g.id,
               room_code: code,
               user_id: uid,
-              display_name: nickname,
+              display_name: `Dr. ${nickname}`,
               card: generateCard(),
               marks: initialMarks(),
               lines_completed: 0,
@@ -260,7 +260,7 @@ export default function PlayOnline() {
       gain += FIRST_LINE_BONUS;
       base44.entities.Game.update(game.id, {
         first_line_player_id: uid,
-        first_line_player_name: nickname
+        first_line_player_name: `Dr. ${nickname}`
       });
       toast.success(`Primeira quina! +${FIRST_LINE_BONUS} bônus`);
     }
@@ -276,7 +276,7 @@ export default function PlayOnline() {
     if (isFullCard(newMarks)) {
       await base44.entities.Game.update(game.id, {
         winner_id: uid,
-        winner_name: nickname,
+        winner_name: `Dr. ${nickname}`,
         status: "finished"
       });
     }

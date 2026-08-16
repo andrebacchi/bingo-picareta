@@ -23,3 +23,16 @@ export const COMPLAINTS = [
   "Minha cartela veio ruim…",
   "Que azar!"
 ];
+
+export const VICTORY_TAUNTS = [
+  "BINGO! Tá aprendendo comigo!",
+  "Eu avisei que ia ganhar!",
+  "Quem mandou duvidar de mim?",
+  "Mais uma vitória pro meu currículo!",
+  "Tchau, perdedor!",
+  "Foi fácil demais!",
+  "Eu sou o rei do picareta!",
+  "Volte quando tiver mais sorte!",
+  "Não teve chance desde o começo!",
+  "Profissional é profissional!"
+];
