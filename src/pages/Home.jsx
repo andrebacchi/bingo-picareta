@@ -50,6 +50,7 @@ export default function Home() {
             <ArrowRight className="w-5 h-5 text-white/40 group-hover:translate-x-1 transition-all" />
           </button>
 
+          <p className="text-center text-sm font-bold text-slate-600 mt-1">Entrar em uma partida online:</p>
           <div className="flex items-center gap-2 p-3 rounded-2xl bg-white border border-slate-200 shadow-sm">
             <div className="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
               <LogIn className="w-6 h-6" />
