@@ -51,7 +51,7 @@ export default function PlayMachine() {
   const toggleSelect = (o) => {
     setSelectedOpps((prev) => {
       if (prev.some((s) => s.name === o.name)) return prev.filter((s) => s.name !== o.name);
-      if (prev.length >= 3) return prev;
+      if (prev.length >= 6) return prev;
       return [...prev, o];
     });
   };
@@ -163,7 +163,7 @@ export default function PlayMachine() {
         </header>
         <main className="max-w-xl mx-auto px-5 py-8">
           <h2 className="text-xl font-black text-slate-900 text-center mb-1">Escolha seus adversários</h2>
-          <p className="text-sm text-slate-500 text-center mb-6">Selecione de 1 a 3 picaretas para enfrentar.</p>
+          <p className="text-sm text-slate-500 text-center mb-6">Selecione de 1 a 6 picaretas para enfrentar.</p>
           <div className="mb-6">
             <label className="block text-sm font-bold text-slate-700 mb-2">Seu nome</label>
             <div className="flex items-center gap-2 rounded-xl border-2 border-slate-200 focus-within:border-rose-400 px-4 py-3 bg-white">
