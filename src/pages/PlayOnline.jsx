@@ -178,30 +178,6 @@ export default function PlayOnline() {
           </div>
           <h2 className="text-xl font-black text-slate-900 mb-1">Entrar na partida</h2>
           <p className="text-sm text-slate-500 mb-4">Digite só um apelido — sem cadastro, sem login.</p>
-          {!searchParams.get("sala") && (
-            <div className="mb-4 text-left">
-              <p className="text-sm font-bold text-slate-700 mb-2">Modo de vitória</p>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setWinMode("line")}
-                  className={`py-2.5 rounded-xl border-2 font-bold text-sm transition-all ${winMode === "line" ? "border-rose-500 bg-rose-50 text-rose-600" : "border-slate-200 bg-white text-slate-600"}`}
-                >
-                  Quina
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setWinMode("full")}
-                  className={`py-2.5 rounded-xl border-2 font-bold text-sm transition-all ${winMode === "full" ? "border-rose-500 bg-rose-50 text-rose-600" : "border-slate-200 bg-white text-slate-600"}`}
-                >
-                  Cartela cheia
-                </button>
-              </div>
-              <p className="text-xs text-slate-400 mt-1.5">
-                {winMode === "line" ? "Quem completar uma fileira primeiro vence" : "Quem preencher a cartela inteira vence"}
-              </p>
-            </div>
-          )}
           <input
             value={nickInput}
             onChange={(e) => setNickInput(e.target.value)}
@@ -358,13 +334,35 @@ export default function PlayOnline() {
             </div>
           </div>
           {isHost ? (
-            <button
-              onClick={start}
-              disabled={playerList.length < 1}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-full bg-rose-500 text-white font-bold disabled:opacity-40 hover:bg-rose-600 transition-colors"
-            >
-              <Play className="w-4 h-4" /> Iniciar jogo
-            </button>
+            <>
+              <div className="mb-4">
+                <p className="text-sm font-bold text-slate-700 mb-2">Modo de vitória</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => base44.entities.Game.update(game.id, { win_mode: "line" })}
+                    className={`py-2.5 rounded-xl border-2 font-bold text-sm transition-all ${(game.win_mode || "full") === "line" ? "border-rose-500 bg-rose-50 text-rose-600" : "border-slate-200 bg-white text-slate-600"}`}
+                  >
+                    Quina
+                  </button>
+                  <button
+                    onClick={() => base44.entities.Game.update(game.id, { win_mode: "full" })}
+                    className={`py-2.5 rounded-xl border-2 font-bold text-sm transition-all ${(game.win_mode || "full") === "full" ? "border-rose-500 bg-rose-50 text-rose-600" : "border-slate-200 bg-white text-slate-600"}`}
+                  >
+                    Cartela cheia
+                  </button>
+                </div>
+                <p className="text-xs text-slate-400 mt-1.5">
+                  {(game.win_mode || "full") === "line" ? "Quem completar uma fileira primeiro vence" : "Quem preencher a cartela inteira vence"}
+                </p>
+              </div>
+              <button
+                onClick={start}
+                disabled={playerList.length < 1}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-full bg-rose-500 text-white font-bold disabled:opacity-40 hover:bg-rose-600 transition-colors"
+              >
+                <Play className="w-4 h-4" /> Iniciar jogo
+              </button>
+            </>
           ) : (
             <p className="text-center text-sm text-slate-500">
               Aguardando o anfitrião iniciar o jogo…
