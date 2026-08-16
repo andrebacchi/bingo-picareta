@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Bot, Plus, LogIn, ArrowRight } from "lucide-react";
+import { User, Users, LogIn, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function Home() {
@@ -27,7 +27,7 @@ export default function Home() {
             className="group flex items-center gap-4 p-5 rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md hover:border-rose-300 transition-all text-left"
           >
             <div className="w-12 h-12 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center">
-              <Bot className="w-6 h-6" />
+              <User className="w-6 h-6" />
             </div>
             <div className="flex-1">
               <h3 className="font-bold text-slate-900">Jogar Sozinho</h3>
@@ -41,7 +41,7 @@ export default function Home() {
             className="group flex items-center gap-4 p-5 rounded-2xl bg-slate-900 text-white shadow-sm hover:shadow-md transition-all text-left"
           >
             <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center">
-              <Plus className="w-6 h-6" />
+              <Users className="w-6 h-6" />
             </div>
             <div className="flex-1">
               <h3 className="font-bold">Criar Sala Online</h3>

@@ -39,6 +39,14 @@
     "winner_name": {
       "type": "string",
       "default": ""
+    },
+    "win_mode": {
+      "type": "string",
+      "enum": [
+        "line",
+        "full"
+      ],
+      "default": "full"
     }
   },
   "required": [

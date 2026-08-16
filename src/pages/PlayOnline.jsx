@@ -6,6 +6,7 @@ import {
   initialMarks,
   countCompletedLines,
   isFullCard,
+  checkBingo,
   shuffle,
   FREE_SPACE
 } from "@/lib/bingoUtils";
@@ -42,6 +43,7 @@ export default function PlayOnline() {
   const [myScore, setMyScore] = useState(0);
   const [myLines, setMyLines] = useState(0);
   const [myPlayerId, setMyPlayerId] = useState(null);
+  const [winMode, setWinMode] = useState("full");
 
   const ready = Boolean(uid && nickname);
 
@@ -116,7 +118,8 @@ export default function PlayOnline() {
             first_line_player_id: "",
             first_line_player_name: "",
             winner_id: "",
-            winner_name: ""
+            winner_name: "",
+            win_mode: winMode
           });
           const p = await base44.entities.Player.create({
             game_id: g.id,
@@ -175,6 +178,30 @@ export default function PlayOnline() {
           </div>
           <h2 className="text-xl font-black text-slate-900 mb-1">Entrar na partida</h2>
           <p className="text-sm text-slate-500 mb-4">Digite só um apelido — sem cadastro, sem login.</p>
+          {!searchParams.get("sala") && (
+            <div className="mb-4 text-left">
+              <p className="text-sm font-bold text-slate-700 mb-2">Modo de vitória</p>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setWinMode("line")}
+                  className={`py-2.5 rounded-xl border-2 font-bold text-sm transition-all ${winMode === "line" ? "border-rose-500 bg-rose-50 text-rose-600" : "border-slate-200 bg-white text-slate-600"}`}
+                >
+                  Quina
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setWinMode("full")}
+                  className={`py-2.5 rounded-xl border-2 font-bold text-sm transition-all ${winMode === "full" ? "border-rose-500 bg-rose-50 text-rose-600" : "border-slate-200 bg-white text-slate-600"}`}
+                >
+                  Cartela cheia
+                </button>
+              </div>
+              <p className="text-xs text-slate-400 mt-1.5">
+                {winMode === "line" ? "Quem completar uma fileira primeiro vence" : "Quem preencher a cartela inteira vence"}
+              </p>
+            </div>
+          )}
           <input
             value={nickInput}
             onChange={(e) => setNickInput(e.target.value)}
@@ -273,7 +300,8 @@ export default function PlayOnline() {
       lines_completed: newLines,
       score: newScore
     });
-    if (isFullCard(newMarks)) {
+    const hasWon = (game.win_mode || "full") === "line" ? checkBingo(newMarks) : isFullCard(newMarks);
+    if (hasWon) {
       await base44.entities.Game.update(game.id, {
         winner_id: uid,
         winner_name: `Dr. ${nickname}`,
@@ -300,7 +328,10 @@ export default function PlayOnline() {
             </div>
             <h2 className="text-xl font-black text-slate-900">Sala {game.room_code}</h2>
             <p className="text-sm text-slate-500">
-              {playerList.length} jogador{playerList.length === 1 ? "" : "es"} na sala
+              {playerList.length} jogador{playerList.length === 1 ? "" : "es"} na sala ·{" "}
+              <span className="font-bold text-rose-500">
+                {game.win_mode === "line" ? "Quina" : "Cartela cheia"}
+              </span>
             </p>
           </div>
           <div className="font-mono text-2xl font-black tracking-[0.3em] text-slate-900 bg-amber-50 border-2 border-dashed border-amber-300 rounded-xl py-3 mb-3 text-center">
@@ -413,7 +444,9 @@ export default function PlayOnline() {
             >
               <div className="text-center mb-4">
                 <Trophy className="w-14 h-14 mx-auto mb-2 text-amber-500" />
-                <h2 className="text-2xl font-black text-slate-900">Cartela cheia! 🎉</h2>
+                <h2 className="text-2xl font-black text-slate-900">
+                  {game.win_mode === "line" ? "Quina! 🎉" : "Cartela cheia! 🎉"}
+                </h2>
                 <p className="text-slate-500 text-sm">
                   <span className="font-bold text-slate-700">{game.winner_name}</span> fechou o jogo
                 </p>
