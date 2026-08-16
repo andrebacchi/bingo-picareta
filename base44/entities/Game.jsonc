@@ -47,6 +47,30 @@
         "full"
       ],
       "default": "full"
+    },
+    "taunt_text": {
+      "type": "string",
+      "default": ""
+    },
+    "taunt_author": {
+      "type": "string",
+      "default": ""
+    },
+    "taunt_kind": {
+      "type": "string",
+      "enum": [
+        "taunt",
+        "complaint"
+      ],
+      "default": "taunt"
+    },
+    "taunt_seq": {
+      "type": "number",
+      "default": 0
+    },
+    "winner_taunt": {
+      "type": "string",
+      "default": ""
     }
   },
   "required": [

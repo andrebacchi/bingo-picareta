@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
@@ -18,6 +18,8 @@ import RankingList from "@/components/RankingList";
 import { Home as HomeIcon, Copy, Check, Loader2, Trophy, Users, Play } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
+import { TAUNTS, COMPLAINTS, VICTORY_TAUNTS } from "@/data/phrases";
+import TauntOverlay from "@/components/TauntOverlay";
 
 function Shell({ children }) {
   return (
@@ -51,6 +53,9 @@ export default function PlayOnline() {
   const [myLines, setMyLines] = useState(0);
   const [myPlayerId, setMyPlayerId] = useState(null);
   const [winMode, setWinMode] = useState("full");
+  const [bubble, setBubble] = useState(null);
+  const bubbleTimer = useRef(null);
+  const prevTauntSeq = useRef(null);
 
   const ready = Boolean(nickname);
 
@@ -172,6 +177,26 @@ export default function PlayOnline() {
     return unsub;
   }, [game?.id]);
 
+  useEffect(() => () => {
+    if (bubbleTimer.current) clearTimeout(bubbleTimer.current);
+  }, []);
+
+  useEffect(() => {
+    if (!game) return;
+    if (prevTauntSeq.current === null) {
+      prevTauntSeq.current = game.taunt_seq || 0;
+      return;
+    }
+    if (game.taunt_seq !== prevTauntSeq.current) {
+      prevTauntSeq.current = game.taunt_seq;
+      if (game.taunt_text && game.taunt_author) {
+        setBubble({ name: game.taunt_author, text: game.taunt_text, kind: game.taunt_kind });
+        if (bubbleTimer.current) clearTimeout(bubbleTimer.current);
+        bubbleTimer.current = setTimeout(() => setBubble(null), 3500);
+      }
+    }
+  }, [game?.taunt_seq]);
+
   if (!ready)
     return (
       <Shell>
@@ -251,7 +276,32 @@ export default function PlayOnline() {
     const remaining = PSEUDO_ARGUMENTS.filter((a) => !calledSet.has(a));
     if (!remaining.length) return;
     const next = shuffle(remaining)[0];
-    await base44.entities.Game.update(game.id, { called_arguments: [...called, next] });
+    const updateData = { called_arguments: [...called, next] };
+    if (Math.random() < 0.35) {
+      const allPlayers = playerList;
+      if (allPlayers.length >= 2) {
+        const withCounts = allPlayers.map((p) => ({
+          ...p,
+          count: (p.marks || []).filter(Boolean).length
+        }));
+        withCounts.sort((a, b) => b.count - a.count);
+        const leader = withCounts[0];
+        const loser = withCounts[withCounts.length - 1];
+        if (leader.count - loser.count >= 2) {
+          if (Math.random() < 0.5) {
+            updateData.taunt_text = TAUNTS[Math.floor(Math.random() * TAUNTS.length)];
+            updateData.taunt_author = leader.display_name;
+            updateData.taunt_kind = "taunt";
+          } else {
+            updateData.taunt_text = COMPLAINTS[Math.floor(Math.random() * COMPLAINTS.length)];
+            updateData.taunt_author = loser.display_name;
+            updateData.taunt_kind = "complaint";
+          }
+          updateData.taunt_seq = (game.taunt_seq || 0) + 1;
+        }
+      }
+    }
+    await base44.entities.Game.update(game.id, updateData);
   };
 
   const mark = async (i) => {
@@ -434,6 +484,11 @@ export default function PlayOnline() {
         </aside>
       </main>
 
+      <TauntOverlay
+        opponent={bubble ? { name: bubble.name, emoji: bubble.kind === "taunt" ? "🗣️" : "😢" } : null}
+        text={bubble?.text}
+      />
+
       <AnimatePresence>
         {gameOver && (
           <motion.div
@@ -455,6 +510,38 @@ export default function PlayOnline() {
                   <span className="font-bold text-slate-700">{game.winner_name}</span> fechou o jogo
                 </p>
               </div>
+              {game.winner_id === uid ? (
+                !game.winner_taunt ? (
+                  <div className="mb-4">
+                    <p className="text-sm font-bold text-slate-700 mb-2 text-center">Escolha sua frase de vitória:</p>
+                    <div className="max-h-48 overflow-y-auto space-y-2">
+                      {VICTORY_TAUNTS.map((phrase, i) => (
+                        <button
+                          key={i}
+                          onClick={() => base44.entities.Game.update(game.id, { winner_taunt: phrase })}
+                          className="w-full text-left px-4 py-2.5 rounded-xl border-2 border-slate-200 bg-white text-sm font-semibold text-slate-700 hover:border-rose-400 hover:bg-rose-50 transition-all"
+                        >
+                          "{phrase}"
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-rose-50 border-2 border-rose-200 rounded-2xl px-4 py-3 mb-4 text-center">
+                    <p className="text-xs font-bold text-rose-500 mb-1">Sua frase de vitória</p>
+                    <p className="font-bold text-slate-800 text-sm">"{game.winner_taunt}"</p>
+                  </div>
+                )
+              ) : (
+                game.winner_taunt ? (
+                  <div className="bg-rose-50 border-2 border-rose-200 rounded-2xl px-4 py-3 mb-4 text-center">
+                    <p className="text-xs font-bold text-rose-500 mb-1">{game.winner_name} diz:</p>
+                    <p className="font-bold text-slate-800 text-sm">"{game.winner_taunt}"</p>
+                  </div>
+                ) : (
+                  <p className="text-sm text-slate-400 mb-4 text-center">Aguardando frase do vencedor…</p>
+                )
+              )}
               <div className="max-h-64 overflow-y-auto mb-4">
                 <RankingList players={playerList} currentUserId={uid} />
               </div>
