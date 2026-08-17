@@ -15,11 +15,12 @@ import { POINTS_PER_MARK, LINE_BONUS, FIRST_LINE_BONUS, FULL_CARD_BONUS, MAX_PLA
 import BingoCard from "@/components/BingoCard";
 import CalledPanel from "@/components/CalledPanel";
 import RankingList from "@/components/RankingList";
-import { Home as HomeIcon, Copy, Check, Loader2, Trophy, Users, Play } from "lucide-react";
+import { Home as HomeIcon, Copy, Check, Loader2, Trophy, Users, Play, BookOpen } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import { TAUNTS, COMPLAINTS, VICTORY_TAUNTS } from "@/data/phrases";
 import TauntOverlay from "@/components/TauntOverlay";
+import ExplanationDialog from "@/components/ExplanationDialog";
 
 function Shell({ children }) {
   return (
@@ -54,6 +55,7 @@ export default function PlayOnline() {
   const [myPlayerId, setMyPlayerId] = useState(null);
   const [winMode, setWinMode] = useState("full");
   const [bubble, setBubble] = useState(null);
+  const [showExplanation, setShowExplanation] = useState(false);
   const bubbleTimer = useRef(null);
   const prevTauntSeq = useRef(null);
 
@@ -467,9 +469,17 @@ export default function PlayOnline() {
             ) : (
               <div className="flex flex-col items-center gap-3 min-h-[92px] justify-center">
                 {currentArg ? (
-                  <div className="px-5 py-3 rounded-2xl bg-gradient-to-br from-rose-500 to-orange-500 text-white text-center font-bold text-base shadow-xl max-w-xs">
-                    {currentArg}
-                  </div>
+                  <>
+                    <button
+                      onClick={() => setShowExplanation(true)}
+                      className="px-5 py-3 rounded-2xl bg-gradient-to-br from-rose-500 to-orange-500 text-white text-center font-bold text-base shadow-xl max-w-xs cursor-pointer hover:scale-105 transition-transform"
+                    >
+                      {currentArg}
+                    </button>
+                    <p className="text-xs font-semibold text-rose-400 flex items-center gap-1">
+                      <BookOpen className="w-3 h-3" /> Toque para entender o erro
+                    </p>
+                  </>
                 ) : (
                   <p className="text-slate-400 text-sm text-center">Aguardando o anfitrião sortear…</p>
                 )}
@@ -483,6 +493,8 @@ export default function PlayOnline() {
           </div>
         </aside>
       </main>
+
+      <ExplanationDialog argument={currentArg} open={showExplanation} onOpenChange={setShowExplanation} />
 
       <TauntOverlay
         opponent={bubble ? { name: bubble.name, emoji: bubble.kind === "taunt" ? "🗣️" : "😢" } : null}
