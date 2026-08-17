@@ -23,15 +23,25 @@ export const TAUNTS = [
 
 export const COMPLAINTS = [
   "Não tô tendo sorte nenhuma…",
-  "Essa cartela tá rasgada!",
+  "Essa cartela tá roubada!",
   "Cadê meus argumentos?",
   "Tá difícil pra mim…",
-  "Você tá com sorte, hein!",
-  "Não acredito que não veio!",
+  "Tá com sorte de principiante!",
+  "Não veio o que eu precisava!",
   "Tô muito atrás…",
-  "Isso é injusta!",
+  "Esse jogo é injusto!",
   "Minha cartela veio ruim…",
-  "Que azar!"
+  "Que azar!",
+  "Estamos em mercúrio retrógrado?",
+  "Estou no meu inferno astral...",
+  "Esse jogo foi vendido para a indústria farmacêutica.",
+  "Calma, eu vou te alcançar.",
+  "Tá se achando melhor que eu?",
+  "Quanto maior a pontuação, maior a queda...",
+  "Era melhor ter visto o filme do Pelé",
+  "Sorte no jogo, azar no amor...",
+  "Se eu perder, quero uma revanche.",
+  "É melhor de três né?"
 ];
 
 export const VICTORY_TAUNTS = [
