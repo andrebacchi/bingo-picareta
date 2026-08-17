@@ -117,9 +117,28 @@ export default function Home() {
         <p className="text-center text-xs text-slate-400 mt-8 px-4">
           Como jogar: Este é um bingo que, ao invés de sortear números, sorteia argumentos comuns de profissionais picaretas. Marque na sua cartela os argumentos sorteados e grite BINGO quando completar linhas, colunas, diagonais ou a cartela cheia!
         </p>
-        <p className="text-center text-xs text-slate-400 mt-4">
-          Criado por André Demambre Bacchi
-        </p>
+        <div className="mt-6 text-center space-y-2">
+          <p className="text-xs text-slate-400">
+            Criado por André Demambre Bacchi ·{" "}
+            <a
+              href="https://instagram.com/bacchi.andre"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-rose-500 hover:text-rose-600"
+            >
+              @bacchi.andre
+            </a>
+          </p>
+          <a
+            href="https://linktr.ee/bacchi.andre"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-sm font-bold text-slate-700 hover:text-rose-600 transition-colors"
+          >
+            Conheça mais sobre André Bacchi
+            <ArrowRight className="w-3.5 h-3.5" />
+          </a>
+        </div>
       </main>
     </div>
   );
