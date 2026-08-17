@@ -12,6 +12,8 @@ import TauntOverlay from "@/components/TauntOverlay";
 import { Image } from "@/components/ui/image";
 import { Home as HomeIcon, RotateCcw, Trophy } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import confetti from "canvas-confetti";
+import { playMark, playDraw, playWin, playLose } from "@/lib/sounds";
 
 function Avatar({ opponent, size = "text-3xl", box = "w-16 h-16" }) {
   if (opponent.image) {
@@ -81,6 +83,7 @@ export default function PlayMachine() {
     const next = shuffle(remaining)[0];
     setCalled((prev) => [...prev, next]);
     setCurrentArg(next);
+    playDraw();
     setThinking(true);
     setTimeout(() => {
       let newWinner = null;
@@ -97,6 +100,7 @@ export default function PlayMachine() {
         setWinner(newWinner);
         setVictoryPhrase(VICTORY_TAUNTS[Math.floor(Math.random() * VICTORY_TAUNTS.length)]);
         setGameOver(true);
+        playLose();
       } else if (Math.random() < 0.5) {
         const myCount = myMarks.filter(Boolean).length;
         let bestDiff = 0;
@@ -128,9 +132,13 @@ export default function PlayMachine() {
     setMyMarks((prev) => {
       const updated = [...prev];
       updated[i] = !updated[i];
+      if (updated[i]) playMark();
       if (updated[i] && checkBingo(updated)) {
         setWinner("you");
         setGameOver(true);
+        playWin();
+        confetti({ particleCount: 140, spread: 90, origin: { y: 0.6 } });
+        setTimeout(() => confetti({ particleCount: 80, spread: 120, origin: { y: 0.5 } }), 250);
       }
       return updated;
     });
@@ -146,6 +154,41 @@ export default function PlayMachine() {
     setGameOver(false);
     setWinner(null);
     setThinking(false);
+  };
+
+  const rematch = () => {
+    if (bubbleTimer.current) clearTimeout(bubbleTimer.current);
+    setBubble(null);
+    setOpponents((prev) =>
+      prev.map((o) => ({ ...o, card: generateCard(), marks: initialMarks() }))
+    );
+    setMyCard(generateCard());
+    setMyMarks(initialMarks());
+    setCalled([]);
+    setCurrentArg(null);
+    setGameOver(false);
+    setWinner(null);
+    setThinking(false);
+    setPhase("playing");
+  };
+
+  const shareResult = async () => {
+    const text =
+      winner === "you"
+        ? `Eu gritei BINGO no Bingo do Picareta e venci os picaretas! 🎉⛏️`
+        : `${winner} gritou BINGO no Bingo do Picareta 😈 — vou me preparar pra revanche!`;
+    const url = window.location.origin;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: "Bingo do Picareta", text, url });
+      } else {
+        await navigator.clipboard.writeText(`${text} ${url}`);
+        setBubble({ name: "share", text: "Resultado copiado!" });
+        setTimeout(() => setBubble(null), 2000);
+      }
+    } catch (e) {
+      // usuário cancelou o compartilhamento — ignorar
+    }
   };
 
   if (phase === "setup") {
@@ -304,12 +347,24 @@ export default function PlayMachine() {
                   <p className="text-slate-500 text-sm mb-5">Tente de novo!</p>
                 </>
               )}
-              <div className="flex gap-2 justify-center">
+              <div className="flex flex-wrap gap-2 justify-center">
                 <button
-                  onClick={reset}
+                  onClick={rematch}
+                  className="px-5 py-2.5 rounded-full bg-rose-500 text-white font-semibold text-sm hover:bg-rose-600"
+                >
+                  Revanche
+                </button>
+                <button
+                  onClick={shareResult}
                   className="px-5 py-2.5 rounded-full bg-slate-900 text-white font-semibold text-sm hover:bg-slate-800"
                 >
-                  Jogar de novo
+                  Compartilhar
+                </button>
+                <button
+                  onClick={reset}
+                  className="px-5 py-2.5 rounded-full bg-slate-100 text-slate-700 font-semibold text-sm hover:bg-slate-200"
+                >
+                  Trocar adversários
                 </button>
                 <button
                   onClick={() => navigate("/")}
