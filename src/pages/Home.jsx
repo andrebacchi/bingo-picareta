@@ -1,14 +1,38 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { User, Users, LogIn, ArrowRight } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { User, Users, LogIn, ArrowRight, Volume2, VolumeX } from "lucide-react";
 import { motion } from "framer-motion";
+
+const BG_MUSIC = "https://media.base44.com/files/public/6a80868dfa031074de38ceef/43139c756_BingodoPicareta.mp3";
 
 export default function Home() {
   const navigate = useNavigate();
   const [code, setCode] = useState("");
+  const [muted, setMuted] = useState(false);
+  const audioRef = useRef(null);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.volume = 0.4;
+    audio.loop = true;
+    if (muted) {
+      audio.pause();
+    } else {
+      audio.play().catch(() => {});
+    }
+  }, [muted]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 via-rose-50 to-white flex flex-col">
+      <audio ref={audioRef} src={BG_MUSIC} autoPlay />
+      <button
+        onClick={() => setMuted((m) => !m)}
+        className="fixed top-4 right-4 z-40 w-10 h-10 rounded-full bg-white/90 shadow-md border border-slate-200 flex items-center justify-center text-slate-700 hover:bg-white transition-colors"
+        aria-label={muted ? "Ativar som" : "Silenciar"}
+      >
+        {muted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+      </button>
       <main className="flex-1 max-w-2xl mx-auto px-5 py-12 sm:py-16 w-full">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
           <img
