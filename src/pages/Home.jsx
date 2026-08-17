@@ -72,7 +72,7 @@ export default function Home() {
             </div>
             <div className="flex-1">
               <h3 className="font-bold text-slate-900">Jogar Sozinho</h3>
-              <p className="text-sm text-slate-500">Partida rápida</p>
+              <p className="text-sm text-slate-500">Partida rápida · quem fizer a Quina primeiro ganha</p>
             </div>
             <ArrowRight className="w-5 h-5 text-slate-300 group-hover:translate-x-1 group-hover:text-rose-500 transition-all" />
           </button>
