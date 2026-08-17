@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Sparkles, Shuffle, BookOpen } from "lucide-react";
+import { Shuffle, BookOpen } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ExplanationDialog from "@/components/ExplanationDialog";
 
@@ -27,7 +27,6 @@ export default function CalledPanel({ currentArg, called, onDraw, canDraw, remai
               transition={{ type: "spring", stiffness: 300, damping: 18 }}
               className="px-5 py-3 rounded-2xl bg-gradient-to-br from-rose-500 to-orange-500 text-white text-center font-bold text-base sm:text-lg shadow-xl max-w-xs cursor-pointer hover:scale-105 transition-transform"
             >
-              <Sparkles className="w-4 h-4 inline mr-1.5" />
               {currentArg}
             </motion.button>
           ) : (
