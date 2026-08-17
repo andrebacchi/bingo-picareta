@@ -1,14 +1,24 @@
 export const TAUNTS = [
   "Tá perdido, querido!",
-  "Já tô na frente!",
+  "Tô na frente! Hehehe...",
   "Desiste enquanto dá tempo!",
-  "Minha cartela tá lotada!",
+  "Nossa, minha cartela tá lotada!",
   "Você é amador, né?",
   "Isso é fácil pra mim!",
-  "Tô cheiroso hoje!",
-  "BINGO tá chegando…",
+  "A sorte tá do meu lado hoje!",
+  "O BINGO tá chegando…",
   "Cadê a sua sorte?",
-  "Eu nasci pra isso!"
+  "Eu nasci pra isso!",
+  "O Universo conspira por mim.",
+  "Você não está acreditando o suficiente.",
+  "Estou vibrando numa frequência maravilhosa!",
+  "Você não vai me alcançar!",
+  "Tá comendo poeira aí?",
+  "Deve ser difícil perder né?",
+  "Que belo dia para te vencer!",
+  "Não chora, tá?",
+  "Sou implacável!",
+  "Eu sempre consigo o que eu quero."
 ];
 
 export const COMPLAINTS = [
