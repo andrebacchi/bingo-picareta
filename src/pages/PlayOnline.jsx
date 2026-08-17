@@ -282,14 +282,14 @@ export default function PlayOnline() {
     if (Math.random() < 0.35) {
       const allPlayers = playerList;
       if (allPlayers.length >= 2) {
-        const withCounts = allPlayers.map((p) => ({
+        const withScores = allPlayers.map((p) => ({
           ...p,
-          count: (p.marks || []).filter(Boolean).length
+          scoreVal: p.score || 0
         }));
-        withCounts.sort((a, b) => b.count - a.count);
-        const leader = withCounts[0];
-        const loser = withCounts[withCounts.length - 1];
-        if (leader.count - loser.count >= 2) {
+        withScores.sort((a, b) => b.scoreVal - a.scoreVal);
+        const leader = withScores[0];
+        const loser = withScores[withScores.length - 1];
+        if (leader.scoreVal - loser.scoreVal >= 2) {
           if (Math.random() < 0.5) {
             updateData.taunt_text = TAUNTS[Math.floor(Math.random() * TAUNTS.length)];
             updateData.taunt_author = leader.display_name;
