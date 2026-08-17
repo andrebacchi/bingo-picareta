@@ -23,6 +23,22 @@ export default function Home() {
     }
   }, [muted]);
 
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const startOnInteraction = () => {
+      if (!muted && audio.paused) {
+        audio.play().catch(() => {});
+      }
+    };
+    document.addEventListener("click", startOnInteraction, { once: true });
+    document.addEventListener("touchstart", startOnInteraction, { once: true });
+    return () => {
+      document.removeEventListener("click", startOnInteraction);
+      document.removeEventListener("touchstart", startOnInteraction);
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 via-rose-50 to-white flex flex-col">
       <audio ref={audioRef} src={BG_MUSIC} autoPlay />
