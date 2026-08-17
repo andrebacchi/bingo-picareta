@@ -119,7 +119,7 @@ export default function PlayMachine() {
         }
       }
       setThinking(false);
-    }, 1400);
+    }, 3000);
   };
 
   const toggle = (i) => {
