@@ -511,22 +511,27 @@ export default function PlayOnline() {
             <motion.div
               initial={{ scale: 0.8, y: 20 }}
               animate={{ scale: 1, y: 0 }}
-              className="bg-white rounded-3xl p-7 max-w-md w-full shadow-2xl"
+              className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl max-h-[90vh] overflow-y-auto"
             >
               <div className="text-center mb-4">
-                <Trophy className="w-14 h-14 mx-auto mb-2 text-amber-500" />
-                <h2 className="text-2xl font-black text-slate-900">
-                  {game.win_mode === "line" ? "Quina! 🎉" : "Cartela cheia! 🎉"}
-                </h2>
-                <p className="text-slate-500 text-sm">
-                  <span className="font-bold text-slate-700">{game.winner_name}</span> fechou o jogo
+                <div className="relative inline-block mb-2">
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-300 to-amber-500 flex items-center justify-center mx-auto shadow-lg ring-4 ring-amber-200">
+                    <Trophy className="w-10 h-10 text-white" />
+                  </div>
+                  <span className="absolute -top-1 -right-1 text-2xl">👑</span>
+                </div>
+                <p className="text-xs font-bold text-amber-500 uppercase tracking-wider mb-1">
+                  {game.win_mode === "line" ? "Quina" : "Cartela cheia"}
                 </p>
+                <h2 className="text-2xl font-black text-slate-900">{game.winner_name}</h2>
+                <p className="text-slate-500 text-sm">é o campeão da partida! 🎉</p>
               </div>
+
               {game.winner_id === uid ? (
                 !game.winner_taunt ? (
                   <div className="mb-4">
                     <p className="text-sm font-bold text-slate-700 mb-2 text-center">Escolha sua frase de vitória:</p>
-                    <div className="max-h-48 overflow-y-auto space-y-2">
+                    <div className="max-h-44 overflow-y-auto space-y-2 pr-1">
                       {VICTORY_TAUNTS.map((phrase, i) => (
                         <button
                           key={i}
@@ -539,22 +544,22 @@ export default function PlayOnline() {
                     </div>
                   </div>
                 ) : (
-                  <div className="bg-rose-50 border-2 border-rose-200 rounded-2xl px-4 py-3 mb-4 text-center">
-                    <p className="text-xs font-bold text-rose-500 mb-1">Sua frase de vitória</p>
-                    <p className="font-bold text-slate-800 text-sm">"{game.winner_taunt}"</p>
+                  <div className="relative bg-gradient-to-br from-rose-50 to-amber-50 border-2 border-rose-300 rounded-2xl px-5 py-4 mb-4 text-center">
+                    <span className="absolute -top-2 -left-2 text-xl">💬</span>
+                    <p className="font-black text-slate-800 text-base leading-snug">"{game.winner_taunt}"</p>
                   </div>
                 )
+              ) : game.winner_taunt ? (
+                <div className="relative bg-gradient-to-br from-rose-50 to-amber-50 border-2 border-rose-300 rounded-2xl px-5 py-4 mb-4 text-center">
+                  <span className="absolute -top-2 -left-2 text-xl">💬</span>
+                  <p className="font-black text-slate-800 text-base leading-snug">"{game.winner_taunt}"</p>
+                </div>
               ) : (
-                game.winner_taunt ? (
-                  <div className="bg-rose-50 border-2 border-rose-200 rounded-2xl px-4 py-3 mb-4 text-center">
-                    <p className="text-xs font-bold text-rose-500 mb-1">{game.winner_name} diz:</p>
-                    <p className="font-bold text-slate-800 text-sm">"{game.winner_taunt}"</p>
-                  </div>
-                ) : (
-                  <p className="text-sm text-slate-400 mb-4 text-center">Aguardando frase do vencedor…</p>
-                )
+                <p className="text-sm text-slate-400 mb-4 text-center">Aguardando frase do vencedor…</p>
               )}
-              <div className="max-h-64 overflow-y-auto mb-4">
+
+              <div className="border-t border-slate-200 pt-4 mb-4">
+                <h3 className="text-xs font-bold text-slate-500 mb-2 px-1 uppercase tracking-wider">Ranking final</h3>
                 <RankingList players={playerList} currentUserId={uid} />
               </div>
               <button
