@@ -71,6 +71,14 @@
     "winner_taunt": {
       "type": "string",
       "default": ""
+    },
+    "quina_player_name": {
+      "type": "string",
+      "default": ""
+    },
+    "quina_seq": {
+      "type": "number",
+      "default": 0
     }
   },
   "required": [

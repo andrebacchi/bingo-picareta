@@ -11,7 +11,7 @@ import {
   FREE_SPACE
 } from "@/lib/bingoUtils";
 import { PSEUDO_ARGUMENTS } from "@/data/arguments";
-import { POINTS_PER_MARK, LINE_BONUS, FIRST_LINE_BONUS, FULL_CARD_BONUS, MAX_PLAYERS } from "@/data/scoring";
+import { POINTS_PER_MARK, LINE_BONUS, FIRST_LINE_BONUS, FULL_CARD_BONUS, QUINA_BONUS, MAX_PLAYERS } from "@/data/scoring";
 import BingoCard from "@/components/BingoCard";
 import CalledPanel from "@/components/CalledPanel";
 import RankingList from "@/components/RankingList";
@@ -20,6 +20,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import { TAUNTS, COMPLAINTS, VICTORY_TAUNTS } from "@/data/phrases";
 import TauntOverlay from "@/components/TauntOverlay";
+import QuinaHighlight from "@/components/QuinaHighlight";
 import ExplanationDialog from "@/components/ExplanationDialog";
 
 function Shell({ children }) {
@@ -55,9 +56,12 @@ export default function PlayOnline() {
   const [myPlayerId, setMyPlayerId] = useState(null);
   const [winMode, setWinMode] = useState("full");
   const [bubble, setBubble] = useState(null);
+  const [quinaHighlight, setQuinaHighlight] = useState(null);
   const [showExplanation, setShowExplanation] = useState(false);
   const bubbleTimer = useRef(null);
+  const quinaTimer = useRef(null);
   const prevTauntSeq = useRef(null);
+  const prevQuinaSeq = useRef(null);
 
   const ready = Boolean(nickname);
 
@@ -181,6 +185,7 @@ export default function PlayOnline() {
 
   useEffect(() => () => {
     if (bubbleTimer.current) clearTimeout(bubbleTimer.current);
+    if (quinaTimer.current) clearTimeout(quinaTimer.current);
   }, []);
 
   useEffect(() => {
@@ -198,6 +203,22 @@ export default function PlayOnline() {
       }
     }
   }, [game?.taunt_seq]);
+
+  useEffect(() => {
+    if (!game) return;
+    if (prevQuinaSeq.current === null) {
+      prevQuinaSeq.current = game.quina_seq || 0;
+      return;
+    }
+    if (game.quina_seq !== prevQuinaSeq.current) {
+      prevQuinaSeq.current = game.quina_seq;
+      if (game.quina_player_name) {
+        setQuinaHighlight(game.quina_player_name);
+        if (quinaTimer.current) clearTimeout(quinaTimer.current);
+        quinaTimer.current = setTimeout(() => setQuinaHighlight(null), 3500);
+      }
+    }
+  }, [game?.quina_seq]);
 
   if (!ready)
     return (
@@ -316,14 +337,22 @@ export default function PlayOnline() {
     const oldLines = myLines;
     const newLines = countCompletedLines(newMarks);
     let gain = POINTS_PER_MARK;
+    const gameUpdates = {};
     if (newLines > oldLines) gain += (newLines - oldLines) * LINE_BONUS;
     if (newLines > oldLines && !game.first_line_player_id) {
       gain += FIRST_LINE_BONUS;
-      base44.entities.Game.update(game.id, {
-        first_line_player_id: uid,
-        first_line_player_name: `Dr. ${nickname}`
-      });
+      gameUpdates.first_line_player_id = uid;
+      gameUpdates.first_line_player_name = `Dr. ${nickname}`;
       toast.success(`Primeira quina! +${FIRST_LINE_BONUS} bônus`);
+    }
+    if (newLines > oldLines && (game.win_mode || "full") === "full") {
+      gain += QUINA_BONUS;
+      gameUpdates.quina_player_name = `Dr. ${nickname}`;
+      gameUpdates.quina_seq = (game.quina_seq || 0) + 1;
+      toast.success(`Quina! +${QUINA_BONUS} bônus`);
+    }
+    if (Object.keys(gameUpdates).length) {
+      base44.entities.Game.update(game.id, gameUpdates);
     }
     const newScore = myScore + gain;
     setMyMarks(newMarks);
@@ -500,6 +529,8 @@ export default function PlayOnline() {
         opponent={bubble ? { name: bubble.name, emoji: bubble.kind === "taunt" ? "🗣️" : "😢" } : null}
         text={bubble?.text}
       />
+
+      <QuinaHighlight playerName={quinaHighlight} />
 
       <AnimatePresence>
         {gameOver && (
