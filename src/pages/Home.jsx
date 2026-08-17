@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import { User, Users, LogIn, ArrowRight, Volume2, VolumeX } from "lucide-react";
 import { motion } from "framer-motion";
+import BookLinks from "@/components/BookLinks";
 
 const BG_MUSIC = "https://media.base44.com/files/public/6a80868dfa031074de38ceef/43139c756_BingodoPicareta.mp3";
 
@@ -112,6 +113,7 @@ export default function Home() {
           </div>
         </div>
 
+        <BookLinks />
         <p className="text-center text-xs text-slate-400 mt-8 px-4">
           Como jogar: Este é um bingo que, ao invés de sortear números, sorteia argumentos comuns de profissionais picaretas. Marque na sua cartela os argumentos sorteados e grite BINGO quando completar linhas, colunas, diagonais ou a cartela cheia!
         </p>
