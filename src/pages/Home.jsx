@@ -17,7 +17,7 @@ export default function Home() {
             className="w-full max-w-md mx-auto rounded-2xl"
           />
           <p className="mt-3 text-slate-500 text-sm sm:text-base max-w-md mx-auto">
-            Aprenda sobre falácias lógicas e vieses cognitivos de maneira rápida, divertida e sem evidências científicas.
+            Aprenda sobre falácias lógicas e vieses cognitivos na área da saúde, de maneira rápida e divertida (e sem evidências científicas!).
           </p>
         </motion.div>
 
