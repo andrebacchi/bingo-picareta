@@ -45,14 +45,19 @@ export const COMPLAINTS = [
 ];
 
 export const VICTORY_TAUNTS = [
-  "BINGO! Tá aprendendo comigo!",
-  "Eu avisei que ia ganhar!",
+  "BINGO! Tá aprendendo comigo?",
+  "Eu avisei que eu ia ganhar!",
   "Quem mandou duvidar de mim?",
   "Mais uma vitória pro meu currículo!",
   "Tchau, perdedor!",
   "Foi fácil demais!",
-  "Eu sou o rei do picareta!",
-  "Volte quando tiver mais sorte!",
+  "Eu sou o rei dos picaretas!",
+  "Volte quando tiver mais preparado!",
   "Não teve chance desde o começo!",
-  "Profissional é profissional!"
+  "Profissional é profissional!",
+  "Se eu fosse você, eu nem tentava de novo.",
+  "Pronto pra mais uma humilhação?",
+  "Gratidão, Universo!",
+  "É tudo uma questão de vibrar na frequência certa!",
+  "Minha retórica é insuperável!"
 ];
