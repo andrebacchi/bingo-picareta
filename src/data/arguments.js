@@ -54,7 +54,7 @@ export const PSEUDO_ARGUMENTS = [
   "Meu protocolo é individualizado",
   "A ciência ignora a vida real",
   "Teste você e me diga",
-  "O ganhador no Nobel concorda com isso",
+  "O ganhador do Nobel concorda com isso",
   "Eu trato pessoas, não estatísticas",
   "Não somos números, somos almas",
   "A medicina perdeu a visão do todo",
