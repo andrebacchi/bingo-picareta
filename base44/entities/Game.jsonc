@@ -40,6 +40,20 @@
       "type": "string",
       "default": ""
     },
+    "winner_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "winner_names": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
     "win_mode": {
       "type": "string",
       "enum": [

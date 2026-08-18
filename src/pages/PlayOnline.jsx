@@ -288,6 +288,7 @@ export default function PlayOnline() {
   );
   const waiting = game.status === "waiting";
   const gameOver = game.status === "finished";
+  const isTie = (game.winner_names || []).length > 1;
 
   const start = async () => {
     await base44.entities.Game.update(game.id, { status: "playing" });
@@ -295,15 +296,32 @@ export default function PlayOnline() {
 
   const draw = async () => {
     if (game.status !== "playing" || gameOver) return;
+
+    // Consolidar resultado no sorteio: checar todos os jogadores antes de sortear
+    const freshPlayers = await base44.entities.Player.filter({ game_id: game.id });
+    const mode = game.win_mode || "full";
+    const winners = freshPlayers.filter((p) =>
+      mode === "line" ? checkBingo(p.marks || []) : isFullCard(p.marks || [])
+    );
+    if (winners.length > 0) {
+      await base44.entities.Game.update(game.id, {
+        status: "finished",
+        winner_id: winners[0].user_id,
+        winner_name: winners[0].display_name,
+        winner_ids: winners.map((w) => w.user_id),
+        winner_names: winners.map((w) => w.display_name)
+      });
+      return;
+    }
+
     const calledSet = new Set(called);
     const remaining = PSEUDO_ARGUMENTS.filter((a) => !calledSet.has(a));
     if (!remaining.length) return;
     const next = shuffle(remaining)[0];
     const updateData = { called_arguments: [...called, next] };
     if (Math.random() < 0.35) {
-      const allPlayers = playerList;
-      if (allPlayers.length >= 2) {
-        const withScores = allPlayers.map((p) => ({
+      if (freshPlayers.length >= 2) {
+        const withScores = freshPlayers.map((p) => ({
           ...p,
           scoreVal: p.score || 0
         }));
@@ -365,12 +383,25 @@ export default function PlayOnline() {
     });
     const hasWon = (game.win_mode || "full") === "line" ? checkBingo(newMarks) : isFullCard(newMarks);
     if (hasWon) {
-      await base44.entities.Game.update(game.id, {
-        winner_id: uid,
-        winner_name: `Dr. ${nickname}`,
-        status: "finished"
-      });
+      toast.success("BINGO! O resultado será confirmado no próximo sorteio.");
     }
+  };
+
+  const leaveRoom = async () => {
+    try {
+      if (game?.host_id === uid) {
+        const others = Object.values(players).filter((p) => p.user_id !== uid);
+        if (others.length > 0) {
+          await base44.entities.Game.update(game.id, { host_id: others[0].user_id });
+        }
+      }
+      if (myPlayerId) {
+        await base44.entities.Player.delete(myPlayerId);
+      }
+    } catch (e) {
+      // ignorar
+    }
+    navigate("/");
   };
 
   const shareUrl = `${window.location.origin}/jogar/online?sala=${game.room_code}`;
@@ -456,7 +487,7 @@ export default function PlayOnline() {
             </p>
           )}
           <button
-            onClick={() => navigate("/")}
+            onClick={leaveRoom}
             className="mt-4 w-full text-sm text-slate-500 hover:text-slate-800 font-semibold"
           >
             Sair da sala
@@ -469,10 +500,10 @@ export default function PlayOnline() {
     <div className="min-h-screen bg-gradient-to-b from-amber-50 via-rose-50 to-white">
       <header className="flex items-center justify-between px-4 py-3 max-w-5xl mx-auto">
         <button
-          onClick={() => navigate("/")}
+          onClick={leaveRoom}
           className="flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-slate-900"
         >
-          <HomeIcon className="w-4 h-4" /> Início
+          <HomeIcon className="w-4 h-4" /> Sair
         </button>
         <h1 className="font-display font-black text-lg sm:text-xl text-slate-900">Bingo do Picareta</h1>
         <div className="text-xs font-mono font-bold text-slate-400">SALA {game.room_code}</div>
@@ -554,11 +585,28 @@ export default function PlayOnline() {
                 <p className="text-xs font-bold text-amber-500 uppercase tracking-wider mb-1">
                   {game.win_mode === "line" ? "Quina" : "Cartela cheia"}
                 </p>
-                <h2 className="text-2xl font-black text-slate-900">{game.winner_name}</h2>
-                <p className="text-slate-500 text-sm">é o campeão da partida! 🎉</p>
+                {isTie ? (
+                  <>
+                    <h2 className="text-2xl font-black text-slate-900">EMPATE! 🤝</h2>
+                    <p className="text-slate-500 text-sm mb-2">Dois vencedores:</p>
+                    <div className="flex flex-wrap justify-center gap-x-2 gap-y-1">
+                      {(game.winner_names || []).map((n, i) => (
+                        <span key={i} className="font-black text-slate-900 text-lg">
+                          {n}{i < (game.winner_names || []).length - 1 ? " e" : ""}
+                        </span>
+                      ))}
+                    </div>
+                    <p className="text-slate-500 text-sm mt-1">completaram ao mesmo tempo! 🎉</p>
+                  </>
+                ) : (
+                  <>
+                    <h2 className="text-2xl font-black text-slate-900">{game.winner_name}</h2>
+                    <p className="text-slate-500 text-sm">é o campeão da partida! 🎉</p>
+                  </>
+                )}
               </div>
 
-              {game.winner_id === uid ? (
+              {!isTie && game.winner_id === uid ? (
                 !game.winner_taunt ? (
                   <div className="mb-4">
                     <p className="text-sm font-bold text-slate-700 mb-2 text-center">Escolha sua frase de vitória:</p>
@@ -580,14 +628,14 @@ export default function PlayOnline() {
                     <p className="font-black text-slate-800 text-base leading-snug">"{game.winner_taunt}"</p>
                   </div>
                 )
-              ) : game.winner_taunt ? (
+              ) : !isTie && game.winner_taunt ? (
                 <div className="relative bg-gradient-to-br from-rose-50 to-amber-50 border-2 border-rose-300 rounded-2xl px-5 py-4 mb-4 text-center">
                   <span className="absolute -top-2 -left-2 text-xl">💬</span>
                   <p className="font-black text-slate-800 text-base leading-snug">"{game.winner_taunt}"</p>
                 </div>
-              ) : (
+              ) : !isTie ? (
                 <p className="text-sm text-slate-400 mb-4 text-center">Aguardando frase do vencedor…</p>
-              )}
+              ) : null}
 
               <div className="border-t border-slate-200 pt-4 mb-4">
                 <h3 className="text-xs font-bold text-slate-500 mb-2 px-1 uppercase tracking-wider">Ranking final</h3>
