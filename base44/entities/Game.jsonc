@@ -86,6 +86,24 @@
       "type": "string",
       "default": ""
     },
+    "winner_taunts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "taunt": {
+            "type": "string"
+          }
+        }
+      },
+      "default": []
+    },
     "quina_player_name": {
       "type": "string",
       "default": ""

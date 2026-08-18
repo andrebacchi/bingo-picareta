@@ -44,6 +44,8 @@ export default function PlayMachine() {
   const [playerNameInput, setPlayerNameInput] = useState(() => localStorage.getItem("bp_machine_nick") || "");
   const [victoryPhrase, setVictoryPhrase] = useState("");
   const [tieNames, setTieNames] = useState([]);
+  const [tiePlayerPhrase, setTiePlayerPhrase] = useState("");
+  const [tieMachinePhrases, setTieMachinePhrases] = useState([]);
 
   useEffect(() => () => {
     if (bubbleTimer.current) clearTimeout(bubbleTimer.current);
@@ -90,6 +92,8 @@ export default function PlayMachine() {
       if (allWinners.length > 1) {
         setWinner("tie");
         setTieNames(allWinners);
+        setTieMachinePhrases(machineWinners.map(() => VICTORY_TAUNTS[Math.floor(Math.random() * VICTORY_TAUNTS.length)]));
+        setTiePlayerPhrase("");
       } else {
         setWinner(allWinners[0]);
       }
@@ -171,6 +175,8 @@ export default function PlayMachine() {
     setWinner(null);
     setThinking(false);
     setTieNames([]);
+    setTiePlayerPhrase("");
+    setTieMachinePhrases([]);
     setVictoryPhrase("");
   };
 
@@ -188,6 +194,8 @@ export default function PlayMachine() {
     setWinner(null);
     setThinking(false);
     setTieNames([]);
+    setTiePlayerPhrase("");
+    setTieMachinePhrases([]);
     setVictoryPhrase("");
     setPhase("playing");
   };
@@ -346,9 +354,36 @@ export default function PlayMachine() {
                 <>
                   <div className="text-5xl mb-2">🤝</div>
                   <h2 className="text-2xl font-black mb-1">EMPATE! 🤝</h2>
-                  <p className="text-slate-500 text-sm mb-5">
+                  <p className="text-slate-500 text-sm mb-3">
                     Dr. {playerName} e {tieNames.filter((n) => n !== "you").join(", ")} completaram o bingo ao mesmo tempo!
                   </p>
+                  {tieMachinePhrases.map((phrase, i) => (
+                    <div key={i} className="relative bg-rose-50 border-2 border-rose-200 rounded-2xl px-4 py-3 mb-2 text-center">
+                      <p className="text-xs font-bold text-slate-500 mb-1">{tieNames.filter((n) => n !== "you")[i]}</p>
+                      <p className="font-bold text-slate-800 text-sm leading-snug">"{phrase}"</p>
+                    </div>
+                  ))}
+                  {!tiePlayerPhrase ? (
+                    <div className="mb-4">
+                      <p className="text-sm font-bold text-slate-700 mb-2 text-center">Escolha sua frase de vitória:</p>
+                      <div className="max-h-44 overflow-y-auto space-y-2 pr-1">
+                        {VICTORY_TAUNTS.map((phrase, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setTiePlayerPhrase(phrase)}
+                            className="w-full text-left px-4 py-2.5 rounded-xl border-2 border-slate-200 bg-white text-sm font-semibold text-slate-700 hover:border-rose-400 hover:bg-rose-50 transition-all"
+                          >
+                            "{phrase}"
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="relative bg-gradient-to-br from-rose-50 to-amber-50 border-2 border-rose-300 rounded-2xl px-4 py-3 mb-4 text-center">
+                      <p className="text-xs font-bold text-slate-500 mb-1">Dr. {playerName}</p>
+                      <p className="font-black text-slate-800 text-sm leading-snug">"{tiePlayerPhrase}"</p>
+                    </div>
+                  )}
                 </>
               ) : winner === "you" ? (
                 <>

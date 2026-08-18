@@ -606,7 +606,37 @@ export default function PlayOnline() {
                 )}
               </div>
 
-              {!isTie && game.winner_id === uid ? (
+              {isTie ? (
+                <div className="mb-4">
+                  {(game.winner_taunts || []).map((t, i) => (
+                    <div key={i} className="relative bg-gradient-to-br from-rose-50 to-amber-50 border-2 border-rose-300 rounded-2xl px-4 py-3 mb-2 text-center">
+                      <p className="text-xs font-bold text-slate-500 mb-1">{t.name}</p>
+                      <p className="font-black text-slate-800 text-sm leading-snug">"{t.taunt}"</p>
+                    </div>
+                  ))}
+                  {game.winner_ids?.includes(uid) && !(game.winner_taunts || []).some((t) => t.user_id === uid) ? (
+                    <div>
+                      <p className="text-sm font-bold text-slate-700 mb-2 text-center">Escolha sua frase de vitória:</p>
+                      <div className="max-h-44 overflow-y-auto space-y-2 pr-1">
+                        {VICTORY_TAUNTS.map((phrase, i) => (
+                          <button
+                            key={i}
+                            onClick={() => {
+                              const updated = [...(game.winner_taunts || []), { user_id: uid, name: `Dr. ${nickname}`, taunt: phrase }];
+                              base44.entities.Game.update(game.id, { winner_taunts: updated });
+                            }}
+                            className="w-full text-left px-4 py-2.5 rounded-xl border-2 border-slate-200 bg-white text-sm font-semibold text-slate-700 hover:border-rose-400 hover:bg-rose-50 transition-all"
+                          >
+                            "{phrase}"
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (game.winner_taunts || []).length < (game.winner_ids || []).length ? (
+                    <p className="text-sm text-slate-400 text-center">Aguardando frases dos vencedores…</p>
+                  ) : null}
+                </div>
+              ) : game.winner_id === uid ? (
                 !game.winner_taunt ? (
                   <div className="mb-4">
                     <p className="text-sm font-bold text-slate-700 mb-2 text-center">Escolha sua frase de vitória:</p>
@@ -628,14 +658,14 @@ export default function PlayOnline() {
                     <p className="font-black text-slate-800 text-base leading-snug">"{game.winner_taunt}"</p>
                   </div>
                 )
-              ) : !isTie && game.winner_taunt ? (
+              ) : game.winner_taunt ? (
                 <div className="relative bg-gradient-to-br from-rose-50 to-amber-50 border-2 border-rose-300 rounded-2xl px-5 py-4 mb-4 text-center">
                   <span className="absolute -top-2 -left-2 text-xl">💬</span>
                   <p className="font-black text-slate-800 text-base leading-snug">"{game.winner_taunt}"</p>
                 </div>
-              ) : !isTie ? (
+              ) : (
                 <p className="text-sm text-slate-400 mb-4 text-center">Aguardando frase do vencedor…</p>
-              ) : null}
+              )}
 
               <div className="border-t border-slate-200 pt-4 mb-4">
                 <h3 className="text-xs font-bold text-slate-500 mb-2 px-1 uppercase tracking-wider">Ranking final</h3>
