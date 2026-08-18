@@ -17,7 +17,7 @@ export default function BingoCard({ card, marks, onToggle, disabled }) {
             onClick={() => onToggle?.(i)}
             disabled={!clickable}
             className={cn(
-              "relative min-h-[58px] sm:min-h-[74px] rounded-lg p-1 sm:p-1.5 text-[10px] sm:text-[13px] leading-tight font-semibold text-center flex items-center justify-center transition-all select-none",
+              "relative min-h-[58px] sm:min-h-[74px] rounded-lg p-1 sm:p-1.5 text-[9px] sm:text-[12px] leading-tight font-semibold text-center flex items-center justify-center overflow-hidden transition-all select-none",
               isFree
                 ? "bg-amber-300 text-amber-900"
                 : marked
