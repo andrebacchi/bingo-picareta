@@ -1,20 +1,27 @@
 import { useState } from "react";
 import { Shuffle, BookOpen } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 import ExplanationDialog from "@/components/ExplanationDialog";
 
-export default function CalledPanel({ currentArg, called, onDraw, canDraw, remaining }) {
+export default function CalledPanel({ currentArg, called, onDraw, canDraw, remaining, pendingBingo }) {
   const [showExplanation, setShowExplanation] = useState(false);
   return (
     <div className="flex flex-col items-center gap-3">
       <button
         onClick={onDraw}
         disabled={!canDraw}
-        className="group flex items-center gap-2 px-6 py-3 rounded-full bg-slate-900 text-white font-bold text-sm shadow-lg hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95"
+        className={cn(
+          "group flex items-center gap-2 px-6 py-3 rounded-full text-white font-bold text-sm shadow-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95",
+          pendingBingo ? "bg-emerald-500 hover:bg-emerald-600" : "bg-slate-900 hover:bg-slate-800"
+        )}
       >
         <Shuffle className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" />
-        Sortear argumento
+        {pendingBingo ? "Confirmar resultado" : "Sortear argumento"}
       </button>
+      {pendingBingo && (
+        <p className="text-xs font-bold text-emerald-500">BINGO detectado! Clique para confirmar.</p>
+      )}
       <div className="min-h-[92px] w-full flex items-center justify-center">
         <AnimatePresence mode="wait">
           {currentArg ? (

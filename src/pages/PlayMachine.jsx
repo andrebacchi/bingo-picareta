@@ -43,6 +43,7 @@ export default function PlayMachine() {
   const [playerName, setPlayerName] = useState("");
   const [playerNameInput, setPlayerNameInput] = useState(() => localStorage.getItem("bp_machine_nick") || "");
   const [victoryPhrase, setVictoryPhrase] = useState("");
+  const [tieNames, setTieNames] = useState([]);
 
   useEffect(() => () => {
     if (bubbleTimer.current) clearTimeout(bubbleTimer.current);
@@ -78,6 +79,35 @@ export default function PlayMachine() {
 
   const draw = () => {
     if (gameOver || thinking) return;
+
+    // Consolidar resultado no sorteio: checar jogador e máquinas antes de sortear
+    const playerWon = checkBingo(myMarks);
+    const machineWinners = opponents.filter((o) => checkBingo(o.marks));
+    if (playerWon || machineWinners.length > 0) {
+      const allWinners = [];
+      if (playerWon) allWinners.push("you");
+      machineWinners.forEach((o) => allWinners.push(o.name));
+      if (allWinners.length > 1) {
+        setWinner("tie");
+        setTieNames(allWinners);
+      } else {
+        setWinner(allWinners[0]);
+      }
+      setGameOver(true);
+      if (playerWon && machineWinners.length === 0) {
+        playWin();
+        confetti({ particleCount: 140, spread: 90, origin: { y: 0.6 } });
+        setTimeout(() => confetti({ particleCount: 80, spread: 120, origin: { y: 0.5 } }), 250);
+      } else if (!playerWon) {
+        setVictoryPhrase(VICTORY_TAUNTS[Math.floor(Math.random() * VICTORY_TAUNTS.length)]);
+        playLose();
+      } else {
+        playWin();
+        confetti({ particleCount: 100, spread: 90, origin: { y: 0.6 } });
+      }
+      return;
+    }
+
     const remaining = PSEUDO_ARGUMENTS.filter((a) => !calledSet.has(a));
     if (!remaining.length) return;
     const next = shuffle(remaining)[0];
@@ -86,22 +116,15 @@ export default function PlayMachine() {
     playDraw();
     setThinking(true);
     setTimeout(() => {
-      let newWinner = null;
       const newOpps = opponents.map((o) => {
         const updated = [...o.marks];
         o.card.forEach((a, i) => {
           if (a === next) updated[i] = true;
         });
-        if (!newWinner && checkBingo(updated)) newWinner = o.name;
         return { ...o, marks: updated };
       });
       setOpponents(newOpps);
-      if (newWinner) {
-        setWinner(newWinner);
-        setVictoryPhrase(VICTORY_TAUNTS[Math.floor(Math.random() * VICTORY_TAUNTS.length)]);
-        setGameOver(true);
-        playLose();
-      } else if (Math.random() < 0.5) {
+      if (Math.random() < 0.5) {
         const myCount = myMarks.filter(Boolean).length;
         let bestDiff = 0;
         let bestName = null;
@@ -133,13 +156,6 @@ export default function PlayMachine() {
       const updated = [...prev];
       updated[i] = !updated[i];
       if (updated[i]) playMark();
-      if (updated[i] && checkBingo(updated)) {
-        setWinner("you");
-        setGameOver(true);
-        playWin();
-        confetti({ particleCount: 140, spread: 90, origin: { y: 0.6 } });
-        setTimeout(() => confetti({ particleCount: 80, spread: 120, origin: { y: 0.5 } }), 250);
-      }
       return updated;
     });
   };
@@ -154,6 +170,8 @@ export default function PlayMachine() {
     setGameOver(false);
     setWinner(null);
     setThinking(false);
+    setTieNames([]);
+    setVictoryPhrase("");
   };
 
   const rematch = () => {
@@ -169,6 +187,8 @@ export default function PlayMachine() {
     setGameOver(false);
     setWinner(null);
     setThinking(false);
+    setTieNames([]);
+    setVictoryPhrase("");
     setPhase("playing");
   };
 
@@ -253,6 +273,7 @@ export default function PlayMachine() {
 
   const bubbleOpponent = bubble ? opponents.find((o) => o.name === bubble.name) : null;
   const winnerOpponent = opponents.find((o) => o.name === winner);
+  const pendingBingo = !gameOver && (checkBingo(myMarks) || opponents.some((o) => checkBingo(o.marks)));
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 via-rose-50 to-white">
@@ -285,6 +306,7 @@ export default function PlayMachine() {
               onDraw={draw}
               canDraw={!gameOver && !thinking && PSEUDO_ARGUMENTS.length - called.length > 0}
               remaining={PSEUDO_ARGUMENTS.length - called.length}
+              pendingBingo={pendingBingo}
             />
           </div>
           <div className="flex flex-col gap-3">
@@ -320,7 +342,15 @@ export default function PlayMachine() {
               animate={{ scale: 1, y: 0 }}
               className="bg-white rounded-3xl p-7 max-w-sm w-full text-center shadow-2xl"
             >
-              {winner === "you" ? (
+              {winner === "tie" ? (
+                <>
+                  <div className="text-5xl mb-2">🤝</div>
+                  <h2 className="text-2xl font-black mb-1">EMPATE! 🤝</h2>
+                  <p className="text-slate-500 text-sm mb-5">
+                    Dr. {playerName} e {tieNames.filter((n) => n !== "you").join(", ")} completaram o bingo ao mesmo tempo!
+                  </p>
+                </>
+              ) : winner === "you" ? (
                 <>
                   <div className="text-5xl mb-2">🎉</div>
                   <h2 className="text-2xl font-black mb-1">BINGO! 🎉</h2>
