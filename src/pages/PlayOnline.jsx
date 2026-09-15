@@ -183,6 +183,35 @@ export default function PlayOnline() {
     return unsub;
   }, [game?.id]);
 
+  // Polling de segurança: busca periodicamente todos os jogadores da sala
+  // para compensar possíveis falhas na inscrição em tempo real.
+  useEffect(() => {
+    if (!game) return;
+    let active = true;
+    const poll = async () => {
+      try {
+        const ps = await base44.entities.Player.filter({ game_id: game.id });
+        if (!active) return;
+        setPlayers((prev) => {
+          const next = {};
+          ps.forEach((x) => (next[x.id] = x));
+          // Preserva overlay local do meu jogador
+          if (myPlayerId && next[myPlayerId]) {
+            next[myPlayerId] = { ...next[myPlayerId], marks: myMarks, score: myScore, lines_completed: myLines };
+          }
+          return next;
+        });
+      } catch (e) {
+        // ignorar
+      }
+    };
+    const interval = setInterval(poll, 2000);
+    return () => {
+      active = false;
+      clearInterval(interval);
+    };
+  }, [game?.id]);
+
   useEffect(() => () => {
     if (bubbleTimer.current) clearTimeout(bubbleTimer.current);
     if (quinaTimer.current) clearTimeout(quinaTimer.current);
