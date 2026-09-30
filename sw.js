@@ -1,5 +1,5 @@
 /* Bingo do Picareta: funciona sem internet depois da primeira visita. Aumente a versão a cada atualização. */
-const VERSION = "bingo-picareta-v1";
+const VERSION = "bingo-picareta-v2";
 self.addEventListener("install", e => { self.skipWaiting(); });
 self.addEventListener("activate", e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== VERSION).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener("fetch", e => {
