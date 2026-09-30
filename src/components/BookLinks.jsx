@@ -4,7 +4,7 @@ const BOOKS = [
   {
     title: "Manual Prático do Picareta em Saúde",
     badge: "Semifinalista do prêmio Jabuti 2025",
-    img: "https://media.base44.com/images/public/6a80868dfa031074de38ceef/8e27d20b7_image.png",
+    img: `${import.meta.env.BASE_URL}img/livro-manual-picareta.jpg`,
     href: "https://a.co/d/0d6uiH9U",
     cta: "Comprar na Amazon",
     icon: ExternalLink,
@@ -13,7 +13,7 @@ const BOOKS = [
   {
     title: "Tarot Cético — Cartomancia Racional",
     subtitle: "Download grátis · livro sobre falácias e vieses",
-    img: "https://media.base44.com/images/public/6a80868dfa031074de38ceef/d01c2326b_image.png",
+    img: `${import.meta.env.BASE_URL}img/livro-tarot-cetico.jpg`,
     href: "https://drive.google.com/file/d/1Zi7Wb5T2tQAeCNduO-DvIcjNKGJ6-aE_/view",
     cta: "Baixar grátis",
     icon: Download,
