@@ -1,7 +1,9 @@
 /* Bingo do Picareta: funciona sem internet depois da primeira visita. Aumente a versão a cada atualização. */
-const VERSION = "bingo-picareta-v2";
+const VERSION = "bingo-picareta-v3";
+// Todos os apps dividem andrebacchi.github.io: apague só os caches deste app.
+const PREFIX = VERSION.replace(/v\d+$/, "");
 self.addEventListener("install", e => { self.skipWaiting(); });
-self.addEventListener("activate", e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== VERSION).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
+self.addEventListener("activate", e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k.startsWith(PREFIX) && k !== VERSION).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener("fetch", e => {
   const req = e.request; if (req.method !== "GET") return;
   const url = new URL(req.url);
