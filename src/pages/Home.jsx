@@ -4,7 +4,7 @@ import { User, Users, LogIn, ArrowRight, Volume2, VolumeX } from "lucide-react";
 import { motion } from "framer-motion";
 import BookLinks from "@/components/BookLinks";
 
-const BG_MUSIC = "https://media.base44.com/files/public/6a80868dfa031074de38ceef/43139c756_BingodoPicareta.mp3";
+const BG_MUSIC = `${import.meta.env.BASE_URL}audio/bingo-do-picareta.mp3`;
 
 export default function Home() {
   const navigate = useNavigate();
@@ -53,7 +53,7 @@ export default function Home() {
       <main className="flex-1 max-w-2xl mx-auto px-5 py-12 sm:py-16 w-full">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
           <img
-            src="https://media.base44.com/images/public/6a80868dfa031074de38ceef/8ab29996f_BingoPicareta.png"
+            src={`${import.meta.env.BASE_URL}img/bingo-picareta-logo.jpg`}
             alt="Bingo do Picareta"
             className="w-full max-w-md mx-auto rounded-2xl"
           />

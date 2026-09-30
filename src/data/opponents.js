@@ -1,8 +1,8 @@
 export const OPPONENTS = [
-  { name: "Dr. Charles Latão", emoji: "🧙", image: "https://media.base44.com/images/public/6a80868dfa031074de38ceef/00b1bba8f_Dr01.png" },
-  { name: "Dra. Pikah Aretha", emoji: "🔮", image: "https://media.base44.com/images/public/6a80868dfa031074de38ceef/85a22da58_dr02.png" },
-  { name: "Dr. Pílan Traj", emoji: "⚛️", image: "https://media.base44.com/images/public/6a80868dfa031074de38ceef/017cc0e52_Dr03.png" },
-  { name: "Dra. Faulkah Truah", emoji: "🍵", image: "https://media.base44.com/images/public/6a80868dfa031074de38ceef/1a6172b7e_Dra04.png" },
-  { name: "Dr. Cair Dinheiro", emoji: "🧘", image: "https://media.base44.com/images/public/6a80868dfa031074de38ceef/ecd5fc337_ChatGPTImage16deagode202615_26_11.png" },
-  { name: "Dra. Seinô Sao", emoji: "🔮", image: "https://media.base44.com/images/public/6a80868dfa031074de38ceef/1a84bdeb5_ChatGPTImage16deagode202615_30_14.png" }
+  { name: "Dr. Charles Latão", emoji: "🧙", image: `${import.meta.env.BASE_URL}img/dr-charles-latao.jpg` },
+  { name: "Dra. Pikah Aretha", emoji: "🔮", image: `${import.meta.env.BASE_URL}img/dra-pikah-aretha.jpg` },
+  { name: "Dr. Pílan Traj", emoji: "⚛️", image: `${import.meta.env.BASE_URL}img/dr-pilan-traj.jpg` },
+  { name: "Dra. Faulkah Truah", emoji: "🍵", image: `${import.meta.env.BASE_URL}img/dra-faulkah-truah.jpg` },
+  { name: "Dr. Cair Dinheiro", emoji: "🧘", image: `${import.meta.env.BASE_URL}img/dr-cair-dinheiro.jpg` },
+  { name: "Dra. Seinô Sao", emoji: "🔮", image: `${import.meta.env.BASE_URL}img/dra-seino-sao.jpg` }
 ];
