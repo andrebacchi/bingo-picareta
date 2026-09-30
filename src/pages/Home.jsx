@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { User, Users, LogIn, ArrowRight, Volume2, VolumeX } from "lucide-react";
 import { motion } from "framer-motion";
 import BookLinks from "@/components/BookLinks";
+import InstallButton from "@/components/InstallButton";
 
 const BG_MUSIC = `${import.meta.env.BASE_URL}audio/bingo-do-picareta.mp3`;
 
@@ -50,7 +51,8 @@ export default function Home() {
       >
         {muted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
       </button>
-      <main className="flex-1 max-w-2xl mx-auto px-5 py-12 sm:py-16 w-full">
+      <InstallButton className="fixed top-4 left-4 z-40" />
+      <main className="flex-1 max-w-2xl mx-auto px-5 pt-20 pb-12 sm:py-16 w-full">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
           <img
             src={`${import.meta.env.BASE_URL}img/bingo-picareta-logo.jpg`}
