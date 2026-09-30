@@ -9,7 +9,8 @@ import ScrollToTop from './components/ScrollToTop';
 // Add page imports here
 import Home from '@/pages/Home';
 import PlayMachine from '@/pages/PlayMachine';
-import PlayOnline from '@/pages/PlayOnline';
+import ClassroomTeacher from '@/pages/ClassroomTeacher';
+import ClassroomStudent from '@/pages/ClassroomStudent';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
@@ -47,7 +48,8 @@ const AuthenticatedApp = () => {
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/" element={<Home />} />
       <Route path="/jogar/maquina" element={<PlayMachine />} />
-      <Route path="/jogar/online" element={<PlayOnline />} />
+      <Route path="/sala/professor" element={<ClassroomTeacher />} />
+      <Route path="/sala/aluno" element={<ClassroomStudent />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

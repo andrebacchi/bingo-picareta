@@ -78,39 +78,42 @@ export default function Home() {
           </button>
 
           <button
-            onClick={() => navigate("/jogar/online")}
+            onClick={() => navigate("/sala/professor")}
             className="group flex items-center gap-4 p-5 rounded-2xl bg-slate-900 text-white shadow-sm hover:shadow-md transition-all text-left"
           >
             <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center">
               <Users className="w-6 h-6" />
             </div>
             <div className="flex-1">
-              <h3 className="font-bold">Criar Sala Online</h3>
-              <p className="text-sm text-white/60">Jogue online com até 50 pessoas.</p>
+              <h3 className="font-bold">Modo Sala de Aula</h3>
+              <p className="text-sm text-white/60">Para o professor: projete o sorteio no telão. A turma inteira joga, sem login.</p>
             </div>
             <ArrowRight className="w-5 h-5 text-white/40 group-hover:translate-x-1 transition-all" />
           </button>
 
-          <p className="text-center text-sm font-bold text-slate-600 mt-1">Entrar em uma partida online:</p>
-          <div className="flex items-center gap-2 p-3 rounded-2xl bg-white border border-slate-200 shadow-sm">
+          <p className="text-center text-sm font-bold text-slate-600 mt-1">Entrar na partida da turma:</p>
+          <form
+            onSubmit={(e) => { e.preventDefault(); if (code.length === 4) navigate(`/sala/aluno?codigo=${code}`); }}
+            className="flex items-center gap-2 p-3 rounded-2xl bg-white border border-slate-200 shadow-sm"
+          >
             <div className="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
               <LogIn className="w-6 h-6" />
             </div>
             <input
               value={code}
-              onChange={(e) => setCode(e.target.value.toUpperCase())}
-              placeholder="CÓDIGO DA SALA"
-              maxLength={6}
+              onChange={(e) => setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 4))}
+              placeholder="CÓDIGO DO TELÃO"
+              maxLength={4}
               className="flex-1 bg-transparent outline-none font-mono font-bold text-slate-700 placeholder:text-slate-300 tracking-wider text-sm uppercase min-w-0"
             />
             <button
-              onClick={() => code && navigate(`/jogar/online?sala=${code}`)}
-              disabled={!code}
+              type="submit"
+              disabled={code.length !== 4}
               className="px-4 py-2 rounded-full bg-amber-500 text-white font-semibold text-sm hover:bg-amber-400 disabled:opacity-40 transition-colors shrink-0"
             >
               Entrar
             </button>
-          </div>
+          </form>
         </div>
 
         <BookLinks />
