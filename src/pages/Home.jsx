@@ -51,7 +51,16 @@ export default function Home() {
       >
         {muted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
       </button>
-      <InstallButton className="fixed top-4 left-4 z-40" />
+      {/* canto superior esquerdo: voltar ao BACCHI LAB e instalar */}
+      <div className="fixed top-4 left-4 z-40 flex items-center gap-3">
+        <a
+          href="https://andrebacchi.github.io/bacchilab/"
+          className="flex items-center h-10 text-[11.5px] leading-none font-semibold uppercase tracking-[0.16em] text-slate-500 no-underline hover:text-rose-600 transition-colors"
+        >
+          ‹ BACCHI LAB
+        </a>
+        <InstallButton />
+      </div>
       <main className="flex-1 max-w-2xl mx-auto px-5 pt-20 pb-12 sm:py-16 w-full">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
           <img
