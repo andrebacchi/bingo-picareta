@@ -6,6 +6,7 @@
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
+  "related_applications": [{ "platform": "webapp", "url": "https://andrebacchi.github.io/bingo-picareta/manifest.json" }],
   "background_color": "#fff7ed",
   "theme_color": "#e11d48",
   "icons": [
