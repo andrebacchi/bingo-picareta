@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { Download } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { janelaApp, appInstalado, marcarInstalado } from "@/lib/janela";
+
+const CHAVE = "bingo-picareta.instalado";
 
 let deferredPrompt = null;
 if (typeof window !== "undefined") {
@@ -25,17 +28,19 @@ const TABS = [["ios", "iPhone"], ["android", "Android"], ["desktop", "Computador
 export default function InstallButton({ className }) {
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState("android");
-  const [installed, setInstalled] = useState(false);
+  const [janela, setJanela] = useState("navegador");
 
   useEffect(() => {
-    const standalone = window.matchMedia?.("(display-mode: standalone)").matches || window.navigator.standalone;
-    setInstalled(!!standalone);
-    const onInstalled = () => setInstalled(true);
+    const j = janelaApp(CHAVE);
+    setJanela(j);
+    if (j === "outra") appInstalado(CHAVE).then((ok) => { if (ok) setJanela("propria"); });
+    const onInstalled = () => { marcarInstalado(CHAVE); setJanela("propria"); };
     window.addEventListener("appinstalled", onInstalled);
     return () => window.removeEventListener("appinstalled", onInstalled);
   }, []);
 
-  if (installed) return null;
+  // some só na janela do próprio app instalado; dentro de outro app (BACCHI LAB), continua visível
+  if (janela === "propria") return null;
 
   const click = async () => {
     if (deferredPrompt) {
@@ -63,6 +68,11 @@ export default function InstallButton({ className }) {
           <DialogHeader>
             <DialogTitle className="text-rose-600">Instalar o Bingo do Picareta</DialogTitle>
           </DialogHeader>
+          {janela === "outra" && (
+            <p className="rounded-xl bg-slate-100 px-3 py-2.5 text-sm text-slate-700">
+              Você abriu este app por dentro de outro, como o BACCHI LAB, e daqui não dá para instalar. Toque em ⋮ no alto da tela e em <b>Abrir no Chrome</b>; lá, toque de novo em <b>Instalar app</b>.
+            </p>
+          )}
           <p className="text-sm text-slate-600">O jogo fica na tela inicial como um aplicativo, abre em tela cheia e funciona sem internet depois da primeira visita.</p>
           <div className="flex gap-1 p-1 rounded-full bg-slate-100 w-fit">
             {TABS.map(([k, l]) => (
