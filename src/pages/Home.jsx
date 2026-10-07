@@ -4,6 +4,7 @@ import { User, Users, LogIn, ArrowRight, Volume2, VolumeX } from "lucide-react";
 import { motion } from "framer-motion";
 import BookLinks from "@/components/BookLinks";
 import InstallButton from "@/components/InstallButton";
+import QrButton from "@/components/QrButton";
 
 const BG_MUSIC = `${import.meta.env.BASE_URL}audio/bingo-do-picareta.mp3`;
 
@@ -51,14 +52,15 @@ export default function Home() {
       >
         {muted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
       </button>
-      {/* canto superior esquerdo: voltar ao BACCHI LAB e instalar */}
-      <div className="fixed top-4 left-4 z-40 flex items-center gap-3">
+      {/* canto superior esquerdo: voltar ao BACCHI LAB, QR code e instalar */}
+      <div className="fixed top-4 left-4 z-40 flex items-center gap-2 sm:gap-3">
         <a
           href="https://andrebacchi.github.io/bacchilab/"
           className="flex items-center h-10 text-[11.5px] leading-none font-semibold uppercase tracking-[0.16em] text-slate-500 no-underline hover:text-rose-600 transition-colors"
         >
           ‹ BACCHI LAB
         </a>
+        <QrButton />
         <InstallButton />
       </div>
       <main className="flex-1 max-w-2xl mx-auto px-5 pt-20 pb-12 sm:py-16 w-full">
